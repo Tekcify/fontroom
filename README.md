@@ -8,7 +8,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 
 **Live:** [fontroom.vercel.app](https://fontroom.vercel.app)
 
-![Fontroom showing Fraunces and Inter on a SaaS website and a banking app](docs/app.jpg)
+![Fontroom trying Fraunces and Inter on stripe.com, desktop and mobile](docs/app.jpg)
 
 ## Features
 
@@ -26,9 +26,9 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 - **Share links.** The URL holds the whole setup, so a link opens exactly what you see.
 - **Keyboard first.** Press `?` in the app for every shortcut.
 
-| Developer docs template | Magazine template, dark preview |
+| Bricolage Grotesque on notion.com | Instrument Serif on linear.app |
 | --- | --- |
-| ![Docs template with Bricolage Grotesque](docs/app-docs.jpg) | ![Magazine template in dark mode with Instrument Serif](docs/app-dark.jpg) |
+| ![Fontroom trying Bricolage Grotesque and DM Sans on notion.com](docs/app-notion.jpg) | ![Fontroom trying Instrument Serif and Inter on linear.app](docs/app-linear.jpg) |
 
 ## Keyboard shortcuts
 
