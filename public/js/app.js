@@ -459,7 +459,7 @@
   function unloadFrames() {
     frames.forEach(f => { f.ready = false; f.sent.clear(); if (f.el.getAttribute("src") && f.el.getAttribute("src") !== "about:blank") f.el.src = "about:blank"; });
   }
-  function renderLive() {
+  function renderLive(force) {
     const url = state.url;
     $("#domain").textContent = url ? hostOf(url) : "your-website.com";
     if (document.activeElement !== urlInput) urlInput.value = url;
@@ -472,19 +472,19 @@
       }
       const src = `api/preview?url=${encodeURIComponent(url)}${f.mobile ? "&ua=mobile" : ""}`;
       f.el.hidden = false;
-      if (f.el.getAttribute("src") === src) return;
+      if (!force && f.el.getAttribute("src") === src) return;
       f.ready = false; f.sent.clear();
       setMsg(f, `Loading ${hostOf(url)}`, true);
       f.el.src = src;
     });
   }
-  function openUrl(raw) {
+  function openUrl(raw, force) {
     const url = normalizeSiteUrl(raw);
     if (!url) { toast("That doesn't look like a web address. Try something like stripe.com.", "err", "live"); return false; }
     if (state.url && state.url !== url) { liveBack.push(state.url); if (liveBack.length > 30) liveBack.shift(); }
     state.url = url;
     urlInput.value = url;
-    renderLive(); syncHash();
+    renderLive(force); syncHash();
     return true;
   }
   frames.forEach(f => f.el.addEventListener("load", () => {
@@ -501,7 +501,7 @@
   });
   $("#urlBar").addEventListener("submit", e => {
     e.preventDefault();
-    if (urlInput.value.trim()) openUrl(urlInput.value);
+    if (urlInput.value.trim()) openUrl(urlInput.value, true);
     else { toast("Paste a link first, like linear.app.", "err", "live"); urlInput.focus(); }
   });
   urlInput.addEventListener("paste", () => setTimeout(() => { if (normalizeSiteUrl(urlInput.value)) openUrl(urlInput.value); }, 0));

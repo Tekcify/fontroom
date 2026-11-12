@@ -250,6 +250,12 @@ test("any website: paste a link, fonts follow, links and back stay in the previe
   spy();
   fromFrame(site, { type: "ready", url: "https://linear.app/" });
   assert.ok($("#siteMsg").hidden);
+  $("#urlBar").requestSubmit();
+  assert.match($("#siteMsg").textContent, /Loading linear\.app/, "Enter on the same link reloads it");
+  assert.ok($("#urlBack").hidden, "reloading doesn't add a back step");
+  spy();
+  fromFrame(site, { type: "ready", url: "https://linear.app/" });
+  assert.ok($("#siteMsg").hidden);
   const m = sent.site.at(-1);
   assert.equal(m.type, "fonts");
   assert.equal(m.heading.family, "Fraunces");

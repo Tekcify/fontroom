@@ -114,13 +114,14 @@ test("private addresses are refused before any request is made", async () => {
   }
 });
 
-function framePage(html, url = "https://example.com/start") {
+function framePage(html, url = "https://example.com/start", { fetch } = {}) {
   const sent = [];
   const dom = new JSDOM(preview.rewriteHtml(html, url), {
     runScripts: "dangerously",
     pretendToBeVisual: true,
     url: "https://fontroom.test/api/preview?url=" + encodeURIComponent(url),
     beforeParse(w) {
+      if (fetch) w.fetch = fetch;
       w.postMessage = m => sent.push(m);
       w.Element.prototype.scrollIntoView = function () { sent.push({ type: "scrolled", id: this.id }); };
       w.scrollTo = () => sent.push({ type: "scrolled-top" });
@@ -150,7 +151,7 @@ test("inside the page, headings and body text take the picked fonts and links st
   msg({ fontroom: 1, type: "fonts", heading: { family: "Fraunces", stack: '"Fraunces", serif', url: "https://fonts.googleapis.com/css2?family=Fraunces:wght@100..900&display=swap" }, body: { family: "Inter", stack: '"Inter", sans-serif}body{color:red' }, weight: 600 });
   const style = d.querySelector("style[data-fontroom]");
   assert.ok(style, "font style is added");
-  assert.match(style.textContent, /--fr-h:"Fraunces", serif;/);
+  assert.match(style.textContent, /--fr-h:"fr Fraunces", "Fraunces", serif;/);
   assert.match(style.textContent, /--fr-hw:600/);
   assert.doesNotMatch(style.textContent, /color:red\}|\}body\{color/, "font names can't break out of the rule");
   assert.match(style.textContent, /\[class\*=" fa-"\]/, "icon fonts are left alone");
@@ -172,6 +173,30 @@ test("inside the page, headings and body text take the picked fonts and links st
   sent.length = 0;
   d.querySelector("#mail").click();
   assert.equal(sent.length, 0);
+  w.close();
+});
+
+test("picked fonts get a private name so the site's own font of the same name can't win", async () => {
+  const urls = [];
+  const fetch = async url => {
+    urls.push(url);
+    if (url.includes("Broken")) return { ok: false, status: 400, text: async () => "" };
+    return { ok: true, status: 200, text: async () => "@font-face{font-family:'Inter';font-weight:100 900;src:url(https://fonts.gstatic.com/x.woff2)}" };
+  };
+  const p = framePage(`<!doctype html><html><head><style>@font-face{font-family:"Inter";src:url(/fonts/inter.woff2)}</style></head><body><h1>Hi</h1><p>Text</p></body></html>`, undefined, { fetch });
+  const { w, d } = p;
+  await new Promise(r => setTimeout(r, 20));
+  const msg = data => w.dispatchEvent(new w.MessageEvent("message", { data: { fontroom: 1, type: "fonts", weight: 700, ...data }, source: w }));
+  msg({ heading: { family: "Broken Font", stack: '"Broken Font", serif', url: "https://fonts.googleapis.com/css2?family=Broken+Font" }, body: { family: "Inter", stack: '"Inter", sans-serif', url: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900" } });
+  await new Promise(r => setTimeout(r, 20));
+  assert.equal(urls.length, 2);
+  const face = d.querySelector("style[data-fontroom-face]");
+  assert.match(face.textContent, /font-family:'fr Inter'/);
+  assert.doesNotMatch(face.textContent, /font-family:'Inter'/);
+  assert.match(d.querySelector("style[data-fontroom]").textContent, /--fr-b:"fr Inter", "Inter", sans-serif/);
+  assert.equal(d.querySelectorAll('link[href*="Broken+Font"]').length, 1, "a failed fetch falls back to a plain stylesheet link");
+  msg({ heading: { family: "Broken Font", stack: '"Broken Font", serif', url: "https://fonts.googleapis.com/css2?family=Broken+Font" }, body: { family: "Inter", stack: '"Inter", sans-serif', url: "https://fonts.googleapis.com/css2?family=Inter:wght@100..900" } });
+  assert.equal(urls.length, 2, "each stylesheet is fetched once");
   w.close();
 });
 
