@@ -4,8 +4,8 @@
   const reduce = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
 
   const PICKS = [
-    { name: "Fraunces", w: 700 },
     { name: "Syne", w: 700 },
+    { name: "Fraunces", w: 700 },
     { name: "Instrument Serif", w: 400 },
     { name: "Space Grotesk", w: 700 },
     { name: "Playfair Display", w: 700 },
@@ -268,6 +268,41 @@
       });
     });
     select(0);
+
+    const pin = $("tryPin");
+    if (pin && !reduce) {
+      let on = false, top = 0, run = 0, last = 0, queued = false;
+      const sec = pin.firstElementChild;
+      const measure = () => {
+        const vh = window.innerHeight || 800;
+        const pad = parseFloat(getComputedStyle(sec).paddingTop) || 0;
+        const body = sec.offsetHeight - pad;
+        on = mq("(min-width: 981px)") && body > 0 && body <= vh - 48;
+        pin.classList.toggle("is-pinned", on);
+        if (!on) { sec.style.top = ""; pin.style.height = ""; return; }
+        const step = Math.round(Math.min(360, Math.max(240, vh * 0.38)));
+        run = step * PICKS.length;
+        top = Math.round((vh - body) / 2 - pad);
+        sec.style.top = top + "px";
+        pin.style.height = sec.offsetHeight + run + "px";
+      };
+      const follow = () => {
+        queued = false;
+        if (!on) return;
+        const p = (top - pin.getBoundingClientRect().top) / run;
+        const i = Math.min(PICKS.length - 1, Math.max(0, Math.floor(p * PICKS.length)));
+        if (i === last) return;
+        last = i;
+        if (i !== pick) select(i);
+      };
+      const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(follow); } };
+      const refit = () => { measure(); last = -1; follow(); };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", refit);
+      window.addEventListener("load", refit);
+      measure();
+      follow();
+    }
   } else {
     renderCode();
   }

@@ -23,11 +23,11 @@ test("landing font picker drives the preview and the code", async () => {
   const opts = $$(".font-opt");
   assert.equal(opts.length, 6);
   assert.equal(opts[0].getAttribute("aria-checked"), "true");
-  assert.match($("#stage").style.getPropertyValue("--fh"), /Fraunces/);
-  assert.match($("#codeOut").textContent, /Fraunces, Inter.*next\/font\/google/);
-  opts[1].click();
   assert.match($("#stage").style.getPropertyValue("--fh"), /Syne/);
-  assert.match($("#codeOut").textContent, /Syne/);
+  assert.match($("#codeOut").textContent, /Syne, Inter.*next\/font\/google/);
+  opts[1].click();
+  assert.match($("#stage").style.getPropertyValue("--fh"), /Fraunces/);
+  assert.match($("#codeOut").textContent, /Fraunces/);
   key(opts[1], "ArrowDown");
   assert.equal(opts[2].getAttribute("aria-checked"), "true");
   assert.equal(p.d.activeElement, opts[2]);
@@ -121,13 +121,50 @@ test("landing preview switches between four site templates and keeps the font", 
   assert.equal($("#tplDomain").textContent, "juniper.cafe");
   assert.match($("#siteBody").textContent, /Bread baked/);
   assert.match($("#phoneBody").textContent, /Your order/);
-  assert.match($("#stage").style.getPropertyValue("--fh"), /Syne/);
+  assert.match($("#stage").style.getPropertyValue("--fh"), /Fraunces/);
   key(tabs[1], "End");
   assert.equal($("#stage").dataset.tpl, "mag");
   assert.equal($("#stage").getAttribute("aria-labelledby"), "tpl-mag");
   assert.ok($$("#siteBody .h").length >= 3, "headings in every template use the picked font");
   key(tabs[3], "ArrowRight");
   assert.equal($("#stage").dataset.tpl, "fin");
+  assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
+test("landing font list pins on scroll and steps through every font before letting go", async () => {
+  const p = openPage("index.html", { media: q => q.includes("min-width") });
+  await p.tick(50);
+  const { $, $$, w } = p;
+  const pin = $("#tryPin"), sec = $("#try");
+  Object.defineProperty(sec, "offsetHeight", { value: 800 });
+  Object.defineProperty(w, "innerHeight", { value: 900, configurable: true });
+  let at = 0;
+  pin.getBoundingClientRect = () => ({ top: at });
+  const scrollTo = async y => { at = y; w.dispatchEvent(new w.Event("scroll")); await p.tick(40); };
+  w.dispatchEvent(new w.Event("resize"));
+  assert.ok(pin.classList.contains("is-pinned"));
+  const top = parseInt(sec.style.top, 10);
+  const run = parseInt(pin.style.height, 10) - 800;
+  assert.ok(run > 0);
+  const opts = $$(".font-opt");
+  const checked = () => opts.findIndex(o => o.getAttribute("aria-checked") === "true");
+  assert.equal(checked(), 0);
+  await scrollTo(400);
+  assert.equal(checked(), 0);
+  for (let i = 0; i < opts.length; i++) {
+    await scrollTo(top - run * (i + 0.5) / opts.length);
+    assert.equal(checked(), i);
+  }
+  await scrollTo(top - run - 500);
+  assert.equal(checked(), opts.length - 1);
+  opts[2].click();
+  await scrollTo(top - run - 520);
+  assert.equal(checked(), 2, "a click is kept until the scroll reaches another font");
+  Object.defineProperty(w, "innerHeight", { value: 700, configurable: true });
+  w.dispatchEvent(new w.Event("resize"));
+  assert.ok(!pin.classList.contains("is-pinned"), "no pin when the section is taller than the window");
+  assert.equal(pin.style.height, "");
   assert.deepEqual(p.errors, []);
   p.w.close();
 });

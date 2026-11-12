@@ -86,6 +86,7 @@ kbd{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 
 .lede{color:var(--t3);font-size:17px;max-width:32em;margin-top:16px}
 
 .try{display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:64px;align-items:center}
+.try-pin.is-pinned .try{position:sticky}
 .fonts{display:grid;margin-top:30px;border-top:1px solid var(--line)}
 .font-opt{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px;padding:0 6px 0 2px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--t4);text-align:left;cursor:pointer;transition:color .16s}
 .font-opt b{font-size:25px;font-weight:inherit;line-height:1;white-space:nowrap}
