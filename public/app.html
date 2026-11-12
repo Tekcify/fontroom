@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fontroom</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fontroom">
+<meta property="og:description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
+<meta property="og:url" content="https://fontroom.vercel.app/app">
+<meta property="og:image" content="https://fontroom.vercel.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#04060a">
+<meta name="description" content="Try any Google Font on a real website and mobile app before you touch your code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 7h3.5c2.5 0 4 1.5 5.5 5s3 5 5.5 5H21M3 17h3.5c1.2 0 2.2-.4 3-1.1M14.5 8.1c.8-.7 1.8-1.1 3-1.1H21M18 4l3 3-3 3M18 14l3 3-3 3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-split" viewBox="0 0 24 24"><rect x="2.5" y="4" width="12" height="15" rx="2"/><rect x="16.5" y="7" width="5" height="12" rx="1.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+  <symbol id="i-request" viewBox="0 0 24 24"><path d="M17 7 7 17M16 17H7V8"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3.5h12V21l-6-4-6 4z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.4 3 8 7 9.5 4-1.5 7-5.1 7-9.5V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14"/></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M8 14h8"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="side" aria-label="Fonts">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">Aa</span>Fontroom<small id="fontCount"></small></a>
+
+    <div class="slots" role="radiogroup" aria-label="Which font to change">
+      <button type="button" class="slot" role="radio" data-slot="heading">
+        <span class="slot-label">Headings</span><span class="slot-state"></span>
+        <span class="slot-name"></span><span class="slot-meta"></span>
+      </button>
+      <button type="button" class="slot" role="radio" data-slot="body">
+        <span class="slot-label">Body text</span><span class="slot-state"></span>
+        <span class="slot-name"></span><span class="slot-meta"></span>
+      </button>
+    </div>
+    <div class="slot-actions">
+      <button type="button" class="btn" id="swapBtn"><svg class="ic sm"><use href="#i-swap"/></svg>Swap</button>
+      <button type="button" class="btn" id="shuffleBtn"><svg class="ic sm"><use href="#i-shuffle"/></svg>Try a pairing</button>
+      <button type="button" class="icon-btn save-btn" id="saveBtn" aria-pressed="false"><svg class="ic"><use href="#i-bookmark"/></svg></button>
+    </div>
+
+    <div class="side-tabs" id="sideTabs" role="tablist" aria-label="Sidebar">
+      <button type="button" role="tab" id="tab-fonts" aria-controls="fontsPanel" aria-selected="true">Fonts</button>
+      <button type="button" role="tab" id="tab-saved" aria-controls="savedPanel" aria-selected="false" tabindex="-1">Saved<span class="tab-count" id="savedCount"></span></button>
+    </div>
+
+    <div class="side-panel" id="fontsPanel" role="tabpanel" aria-labelledby="tab-fonts">
+
+    <label class="search">
+      <svg class="ic"><use href="#i-search"/></svg>
+      <span class="sr">Search Google Fonts</span>
+      <input id="q" type="text" role="combobox" aria-controls="fontList" aria-expanded="true" aria-autocomplete="list" autocomplete="off" spellcheck="false">
+      <kbd aria-hidden="true">/</kbd>
+    </label>
+
+    <div class="cats" id="cats" role="radiogroup" aria-label="Category"></div>
+
+    <div class="list-wrap">
+      <div class="list-head"><span id="listCount"></span><span>Hover to try, click to keep</span></div>
+      <div class="list" id="fontList" role="listbox" aria-label="Fonts"></div>
+    </div>
+    </div>
+
+    <div class="side-panel" id="savedPanel" role="tabpanel" aria-labelledby="tab-saved" hidden>
+      <div class="saved" id="savedList"></div>
+    </div>
+
+    <div class="side-tools">
+      <button type="button" class="btn" id="uploadBtn"><svg class="ic sm"><use href="#i-upload"/></svg>Try your own font file</button>
+      <button type="button" class="icon-btn" id="keysBtn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts"><svg class="ic"><use href="#i-keyboard"/></svg></button>
+      <input type="file" id="fontFile" accept=".woff2,.woff,.ttf,.otf" hidden>
+    </div>
+
+    <p class="side-foot">Click any text in the preview to rewrite it. Fonts load live from Google Fonts. Your own font files stay on this device. <a href="https://github.com/appdever01/fontroom">Source on GitHub</a></p>
+  </aside>
+
+  <main class="main">
+    <div class="toolbar">
+      <div class="seg" id="viewSeg" role="radiogroup" aria-label="Preview"></div>
+      <div class="dd" id="tplDD"></div>
+      <div class="dd" id="weightDD"></div>
+      <div class="dd" id="sizeDD"></div>
+      <button type="button" class="icon-btn" id="themeBtn"><svg class="ic"><use href="#i-moon"/></svg></button>
+      <div class="swatches"><div class="sw-group" id="swatches" role="radiogroup" aria-label="Accent colour"></div><label class="sw sw-pick" id="pickWrap" title="Custom colour"><input type="color" id="accentPick" aria-label="Custom accent colour"></label></div>
+      <span class="spacer"></span>
+      <button type="button" class="btn" id="shareBtn" aria-label="Copy link" title="Copy a link to this setup"><svg class="ic sm"><use href="#i-link"/></svg><span class="lbl">Copy link</span></button>
+      <button type="button" class="btn primary" id="codeBtn"><svg class="ic sm"><use href="#i-code"/></svg>Get code</button>
+    </div>
+    <div class="stage-wrap" id="stageWrap">
+      <div class="stage" id="stage">
+        <div class="site-col">
+          <div class="col-label"><b>Website</b><span id="siteWidth"></span><span class="scale" id="siteScale"></span></div>
+          <div class="browser" id="browser">
+            <div class="browser-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><div class="url"><svg class="ic sm"><use href="#i-lock"/></svg><span id="domain"></span></div><span class="dots-spacer"></span></div>
+            <div class="mock site" id="site"></div>
+          </div>
+        </div>
+        <div class="phone-col">
+          <div class="col-label"><b>Mobile app</b><span id="phoneWidth"></span><span class="scale">Actual size</span></div>
+          <div class="phone"><div class="mock screen" id="screen"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" hidden>
+  <div class="drawer-head">
+    <div><h2 id="drawerTitle">Use this pairing</h2><p id="drawerSub"></p></div>
+    <button type="button" class="icon-btn" id="drawerClose" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Platform"></div>
+  <div class="drawer-body" id="codeBody" role="tabpanel"></div>
+</aside>
+
+<div class="drop" id="drop" hidden><div class="drop-card"><svg class="ic"><use href="#i-upload"/></svg><p>Drop a font file to try it</p><span>.woff2, .woff, .ttf or .otf. It stays on this device.</span></div></div>
+
+<dialog class="keys" id="keys" aria-labelledby="keysTitle">
+  <div class="keys-head"><h2 id="keysTitle">Keyboard shortcuts</h2><button type="button" class="icon-btn" id="keysClose" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></div>
+  <dl class="keys-list">
+    <div><dt><kbd>/</kbd></dt><dd>Search fonts</dd></div>
+    <div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Preview fonts in the list</dd></div>
+    <div><dt><kbd>Enter</kbd></dt><dd>Keep the previewed font</dd></div>
+    <div><dt><kbd>H</kbd> <kbd>B</kbd></dt><dd>Edit headings or body text</dd></div>
+    <div><dt><kbd>X</kbd></dt><dd>Swap heading and body fonts</dd></div>
+    <div><dt><kbd>R</kbd></dt><dd>Try a random pairing</dd></div>
+    <div><dt><kbd>S</kbd></dt><dd>Save or unsave this pairing</dd></div>
+    <div><dt><kbd>D</kbd></dt><dd>Switch light and dark preview</dd></div>
+    <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Show both, website or app</dd></div>
+    <div><dt><kbd>U</kbd></dt><dd>Try your own font file</dd></div>
+    <div><dt><kbd>C</kbd></dt><dd>Get the code</dd></div>
+    <div><dt><kbd>?</kbd></dt><dd>Show this list</dd></div>
+  </dl>
+</dialog>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="js/core.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

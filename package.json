@@ -1,0 +1,22 @@
+{
+  "name": "fontroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Try any Google Font, or your own font file, on a real website and mobile app before you touch your code.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appdever01/fontroom.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "npx --yes serve@14 public -l 4815",
+    "test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
+    "check": "node --check public/js/core.js && node --check public/js/templates.js && node --check public/js/app.js"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.0"
+  }
+}

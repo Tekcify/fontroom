@@ -1,0 +1,7 @@
+node_modules
+tests
+docs
+package.json
+package-lock.json
+README.md
+CONTRIBUTING.md

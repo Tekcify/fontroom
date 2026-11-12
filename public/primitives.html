@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fontroom Primitives</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fontroom primitives">
+<meta property="og:description" content="The tokens and components behind Fontroom, with usage rules and live states.">
+<meta property="og:url" content="https://fontroom.vercel.app/primitives">
+<meta property="og:image" content="https://fontroom.vercel.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#04060a">
+<meta name="description" content="The tokens and components behind Fontroom.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces&family=Inter:wght@400;500;600;700;800&family=Poppins&family=Roboto&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:"Aspekta";src:url(fonts/AspektaVF.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+:root{
+  --bg:#04060a;--panel:#0b0f15;--s1:#121721;--s2:#181e29;--s3:#202735;--line:#222936;
+  --t1:#f4f7fb;--t2:#cdd5e1;--t3:#a0aabb;--t4:#7f8a9d;
+  --ok:#5fd4a0;--err:#f0727a;
+  --ui:"Aspekta",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --grad:linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#06b6d4 100%);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--t1);font:15px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"ss01","cv11";overflow-x:clip}
+::selection{background:rgba(255,255,255,.22)}
+:focus-visible{outline:2px solid rgba(244,247,251,.6);outline-offset:2px;border-radius:8px}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input{font:inherit;color:inherit}
+.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.sm{width:14px;height:14px}
+*{scrollbar-width:thin;scrollbar-color:var(--s3) transparent}
+
+.layout{display:grid;grid-template-columns:232px minmax(0,1fr);max-width:1240px;margin:0 auto}
+.toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 16px 28px 24px}
+.toc a.toc-brand{display:flex;padding:0;background:none;color:var(--t1);align-items:center;gap:10px;font-weight:650;font-size:15px;margin-bottom:28px;color:inherit;text-decoration:none}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--t1);color:var(--bg);display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.toc h2{font-size:12px;font-weight:500;color:var(--t4);margin:20px 0 6px 8px}
+.toc a{display:block;padding:5px 8px;border-radius:7px;color:var(--t3);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s}
+.toc a:hover{color:var(--t1);background:var(--s1)}
+.toc a[aria-current=true]{color:var(--t1);background:var(--s1)}
+main{padding:40px 32px 120px;min-width:0}
+.intro{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.intro h1{font-size:clamp(30px,4vw,44px);line-height:1.08;font-weight:650;letter-spacing:-.03em}
+.intro p{color:var(--t3);margin-top:10px;max-width:36em}
+
+.switch{display:inline-flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;color:var(--t2);cursor:pointer}
+.switch-track{position:relative;width:36px;height:22px;border-radius:99px;background:var(--s3);transition:background .2s}
+.switch-track::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--t3);transition:transform .25s var(--ease),background .2s}
+.switch[aria-checked=true] .switch-track{background:var(--t1)}
+.switch[aria-checked=true] .switch-track::after{transform:translateX(14px);background:var(--bg)}
+
+.sec{padding-top:64px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:6px}
+.sec h2{font-size:22px;font-weight:620;letter-spacing:-.02em}
+.sec-tag{font:12px var(--mono);color:var(--t4)}
+.rule{color:var(--t3);font-size:14.5px;max-width:44em}
+.rule b{color:var(--t2);font-weight:550}
+.group-title{font-size:12px;font-weight:500;color:var(--t4);margin:28px 0 10px}
+
+.demo{margin-top:18px;background:var(--panel);border-radius:16px;overflow:hidden}
+.demo-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:20px 28px;padding:24px}
+.state{display:grid;gap:10px;justify-items:start}
+.state-label{font-size:11.5px;color:var(--t4)}
+.demo-foot{display:flex;align-items:flex-start;gap:12px;padding:0 24px 20px}
+.demo-foot pre{flex:1;min-width:0}
+.slop-row{display:none;border-top:1px dashed var(--s3);background:#08060f}
+body.compare .slop-row{display:flex}
+.slop-row .state-label{color:#c4b5fd}
+.slop-note{flex-basis:100%;font-size:12.5px;color:#c4b5fd}
+
+pre{margin:0;padding:12px 14px;background:var(--bg);border-radius:10px;font:12.5px/1.65 var(--mono);color:var(--t2);white-space:pre-wrap;overflow-wrap:anywhere}
+.copy{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 9px;border-radius:7px;font-size:12px;color:var(--t3);background:var(--s1);flex:none;transition:background .15s,color .15s}
+.copy:hover{color:var(--t1);background:var(--s2)}
+
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:24px}
+.swatch{border-radius:12px;background:var(--s1);overflow:hidden}
+.swatch-chip{height:64px;box-shadow:inset 0 -1px 0 rgba(255,255,255,.04)}
+.swatch-body{padding:10px 12px 12px;display:grid;gap:2px}
+.swatch-body b{font-size:13px;font-weight:600}
+.swatch-body span{font:11.5px var(--mono);color:var(--t3)}
+.swatch-body small{font-size:11.5px;color:var(--t4)}
+.type-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;align-items:baseline;padding:14px 24px;border-top:1px solid var(--line)}
+.type-row:first-child{border-top:0}
+.type-meta{font:12px var(--mono);color:var(--t4)}
+.type-sample{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.space-row{display:grid;grid-template-columns:56px 1fr;gap:16px;align-items:center;padding:6px 24px}
+.space-row:first-child{padding-top:24px}.space-row:last-child{padding-bottom:24px}
+.space-bar{height:12px;border-radius:3px;background:var(--s3)}
+.radii{display:flex;flex-wrap:wrap;gap:16px;padding:24px}
+.radius{display:grid;gap:8px;justify-items:center;font:12px var(--mono);color:var(--t3)}
+.radius i{width:72px;height:56px;background:var(--s2);box-shadow:inset 0 0 0 1px var(--s3)}
+.radius small{font-family:var(--ui);color:var(--t4)}
+.icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;padding:24px}
+.icon-cell{display:grid;justify-items:center;gap:8px;padding:14px 6px;border-radius:10px;background:var(--s1);font:11px var(--mono);color:var(--t3)}
+.icon-cell .ic{width:20px;height:20px;color:var(--t1)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;background:var(--s1);color:var(--t2);font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,color .15s,transform .12s var(--ease)}
+.btn:hover,.btn.is-hover{background:var(--s2);color:var(--t1)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--t1);color:var(--bg);font-weight:600}
+.btn.primary:hover,.btn.primary.is-hover{background:#fff}
+.btn.lg{height:44px;padding:0 18px;font-size:14.5px;border-radius:11px}
+.btn[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+.is-focus{outline:2px solid rgba(244,247,251,.6);outline-offset:2px}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--s1);color:var(--t2);transition:background .15s,color .15s}
+.icon-btn:hover,.icon-btn.is-hover{background:var(--s2);color:var(--t1)}
+
+.search{display:flex;align-items:center;gap:8px;width:300px;max-width:100%;height:40px;padding:0 10px 0 12px;background:var(--s1);border-radius:10px;color:var(--t3);transition:box-shadow .15s}
+.search:focus-within,.search.is-focus{box-shadow:inset 0 0 0 1px rgba(244,247,251,.42);outline:0}
+.search input{flex:1;min-width:0;background:none;border:0;outline:0;height:100%;font-size:14px;color:var(--t1)}
+.search input::placeholder{color:var(--t4)}
+kbd{font:500 11px/1 var(--mono);color:var(--t3);background:var(--s3);border-radius:5px;padding:4px 6px}
+
+.dd{position:relative}
+.dd-btn{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 10px 0 12px;border-radius:9px;background:var(--s1);font-size:13px;font-weight:500;color:var(--t1);white-space:nowrap;transition:background .15s}
+.dd-btn:hover{background:var(--s2)}
+.dd-k{color:var(--t4);font-weight:450}
+.dd-btn .ic{color:var(--t3);transition:transform .2s var(--ease)}
+.dd-btn[aria-expanded=true] .ic{transform:rotate(180deg)}
+.dd-pop{position:absolute;z-index:40;top:calc(100% + 6px);left:0;min-width:100%;max-width:calc(100vw - 32px);margin:0;padding:5px;list-style:none;background:var(--s2);border-radius:12px;box-shadow:0 18px 40px -12px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.35);outline:0;animation:pop .16s var(--ease)}
+.dd-pop[hidden]{display:none}
+.dd-pop.static{position:static;animation:none;width:220px}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}}
+.dd-opt{display:flex;align-items:center;gap:12px;min-height:36px;padding:0 10px;border-radius:8px;font-size:13px;color:var(--t2);cursor:pointer;white-space:nowrap}
+.dd-opt .dd-sub{margin-left:auto;color:var(--t4);font-size:12px}
+.dd-opt.active{background:var(--s3);color:var(--t1)}
+.dd-opt[aria-selected=true]{color:var(--t1);font-weight:600}
+.dd-opt .tick{width:14px;visibility:hidden}
+.dd-opt[aria-selected=true] .tick{visibility:visible}
+.dd-opt[aria-disabled=true]{color:var(--t4);cursor:not-allowed}
+
+.seg{display:inline-flex;background:var(--s1);border-radius:10px;padding:3px;gap:2px}
+.seg button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:7px;font-size:13px;font-weight:500;color:var(--t3);transition:background .15s,color .15s}
+.seg button:hover{color:var(--t1)}
+.seg button[aria-checked=true]{background:var(--s3);color:var(--t1)}
+
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{height:28px;padding:0 10px;border-radius:99px;font-size:12.5px;font-weight:500;color:var(--t3);transition:background .15s,color .15s}
+.chip:hover{color:var(--t1);background:var(--s1)}
+.chip[aria-checked=true]{background:var(--t1);color:var(--bg)}
+
+.sws{display:inline-flex;align-items:center;gap:4px;background:var(--s1);border-radius:10px;padding:0 8px;height:34px}
+.sw{width:20px;height:20px;border-radius:50%;background:var(--c);transition:transform .15s var(--ease)}
+.sw:hover{transform:scale(1.1)}
+.sw[aria-checked=true]{box-shadow:0 0 0 2px var(--s1),0 0 0 3.5px var(--t1)}
+
+.tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;width:420px;max-width:100%}
+.tabs button{flex:1;height:30px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--t3)}
+.tabs button:hover{color:var(--t1)}
+.tabs button[aria-selected=true]{background:var(--s3);color:var(--t1)}
+.tab-panel{font-size:13px;color:var(--t3);margin-top:10px}
+
+.slot{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;width:250px;text-align:left;background:var(--s1);border-radius:12px;padding:10px 12px 11px}
+.slot.on{background:var(--s2);box-shadow:inset 0 0 0 1px rgba(244,247,251,.42)}
+.slot-label{font-size:12px;color:var(--t3);font-weight:500}
+.slot-state{font-size:11.5px;color:var(--t4);justify-self:end}
+.slot.previewing .slot-state{color:var(--t1)}
+.slot-name{grid-column:1/-1;font-size:21px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot-meta{grid-column:1/-1;font-size:12px;color:var(--t4)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:5px;vertical-align:1px;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+.opts{width:280px;display:grid;gap:2px}
+.opt{display:flex;align-items:baseline;gap:10px;padding:8px 10px;border-radius:9px}
+.opt-name{flex:1;font-size:18px;line-height:1.35;color:var(--t2)}
+.opt-cat{font-size:11.5px;color:var(--t4)}
+.opt.active{background:var(--s2)}
+.opt.active .opt-name,.opt.current .opt-name{color:var(--t1)}
+.opt-badge{font-size:11px;font-weight:600;color:var(--bg);background:var(--t1);border-radius:5px;padding:2px 6px;align-self:center}
+
+.toast{display:inline-flex;align-items:center;gap:10px;max-width:min(440px,calc(100vw - 32px));padding:11px 16px;border-radius:12px;background:var(--t1);color:var(--bg);font-size:13.5px;font-weight:500;box-shadow:0 16px 40px -12px rgba(0,0,0,.7)}
+.toast.err{background:#2a1418;color:#ffd9dc;box-shadow:inset 0 0 0 1px #5a2a31,0 16px 40px -12px rgba(0,0,0,.7)}
+.toasts{position:fixed;z-index:80;left:50%;bottom:24px;transform:translateX(-50%);display:grid;gap:8px;justify-items:center;pointer-events:none}
+.toasts .toast{animation:toast .3s var(--ease)}
+.toasts .toast.out{opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s}
+@keyframes toast{from{opacity:0;transform:translateY(10px)}}
+
+.code{width:420px;max-width:100%}
+.code-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.code-head span{font-size:12px;color:var(--t3);font-weight:500}
+
+.slop .s-btn{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 24px;border-radius:9999px;background:var(--grad);color:#fff;font:700 14px "Inter",system-ui,sans-serif;box-shadow:0 0 30px rgba(236,72,153,.45),0 10px 30px rgba(139,92,246,.4);transition:all .3s}
+.slop .s-btn:hover{transform:translateY(-3px) scale(1.05)}
+.slop .s-ghost{display:inline-flex;align-items:center;height:44px;padding:0 24px;border-radius:9999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:#fff;font:600 14px "Inter",system-ui,sans-serif;backdrop-filter:blur(10px)}
+.slop .s-input{display:flex;align-items:center;gap:8px;width:300px;max-width:100%;height:44px;padding:0 18px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(139,92,246,.5);box-shadow:0 0 24px rgba(139,92,246,.45);color:#d8c8ff;font:14px "Inter",system-ui,sans-serif}
+.slop .s-pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;border-radius:9999px;background:var(--grad);color:#fff;font:600 13px "Inter",system-ui,sans-serif;box-shadow:0 0 16px rgba(236,72,153,.45)}
+.slop .s-chip{display:inline-flex;align-items:center;height:30px;padding:0 12px;border-radius:9999px;border:1px solid rgba(255,255,255,.14);font:500 12.5px "Inter",system-ui,sans-serif;color:#e9ddff}
+.slop .s-chip.on{background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-color:transparent;color:#fff;box-shadow:0 0 16px rgba(6,182,212,.5)}
+.slop .s-card{width:250px;padding:12px 14px;border-radius:18px;background:rgba(139,92,246,.12);border:1px solid rgba(255,255,255,.1);box-shadow:0 0 0 2px #8b5cf6,0 0 30px rgba(139,92,246,.55);font-family:"Inter",system-ui,sans-serif}
+.slop .s-card small{font-weight:700;color:#e9ddff}
+.slop .s-card b{display:block;font-size:20px;margin-top:2px}
+.slop .s-toast{display:inline-flex;padding:12px 18px;border-radius:16px;background:var(--grad);color:#fff;font:600 13.5px "Inter",system-ui,sans-serif;box-shadow:0 0 30px rgba(236,72,153,.6)}
+.slop .s-badge{display:inline-flex;padding:5px 11px;border-radius:9999px;font:600 11.5px "Inter",system-ui,sans-serif;color:#e9ddff;background:rgba(139,92,246,.18);border:1px solid rgba(139,92,246,.45);box-shadow:0 0 14px rgba(139,92,246,.3)}
+.slop .s-emoji{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--grad);box-shadow:0 0 30px rgba(236,72,153,.45)}
+.slop .s-gradtext{font:800 28px/1.1 "Inter",system-ui,sans-serif;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .toc{position:sticky;z-index:20;top:0;height:auto;display:flex;gap:4px;overflow-x:auto;padding:12px 16px;background:rgba(4,6,10,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);scrollbar-width:none}
+  .toc::-webkit-scrollbar{display:none}
+  .toc-brand,.toc h2{display:none}
+  .toc a{flex:none;white-space:nowrap}
+  main{padding:28px 16px 96px}
+  .demo-row{padding:18px}
+  .demo-foot{padding:0 18px 16px;flex-direction:column}
+  .type-row{grid-template-columns:1fr;gap:4px;padding:12px 18px}
+  .swatches,.icons,.radii{padding:18px}
+  .swatches{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 7h3.5c2.5 0 4 1.5 5.5 5s3 5 5.5 5H21M3 17h3.5c1.2 0 2.2-.4 3-1.1M14.5 8.1c.8-.7 1.8-1.1 3-1.1H21M18 4l3 3-3 3M18 14l3 3-3 3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-split" viewBox="0 0 24 24"><rect x="2.5" y="4" width="12" height="15" rx="2"/><rect x="16.5" y="7" width="5" height="12" rx="1.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+</svg>
+
+<div class="layout">
+  <nav class="toc" aria-label="Primitives">
+    <a class="toc-brand" href="index.html"><span class="brand-mark" aria-hidden="true">Aa</span>Fontroom</a>
+    <h2>Foundations</h2>
+    <a href="#colour">Colour</a><a href="#type">Type</a><a href="#space">Spacing</a><a href="#radius">Radius</a><a href="#icons">Icons</a>
+    <h2>Components</h2>
+    <a href="#button">Button</a><a href="#icon-button">Icon button</a><a href="#input">Search input</a><a href="#dropdown">Dropdown</a><a href="#segmented">Segmented control</a><a href="#chip">Chip</a><a href="#swatch">Swatch</a><a href="#tabs">Tabs</a><a href="#slot">Font slot</a><a href="#option">List option</a><a href="#toast">Toast</a><a href="#codeblock">Code block</a>
+  </nav>
+
+  <main>
+    <header class="intro">
+      <div>
+        <h1>Fontroom primitives</h1>
+        <p>The tokens and components the clean tool is built from. Every value on this page is the one the app uses.</p>
+      </div>
+      <button type="button" class="switch" role="switch" aria-checked="false" id="compare"><span class="switch-track"></span>Compare with slop</button>
+    </header>
+
+    <section class="sec" id="colour" aria-labelledby="h-colour">
+      <div class="sec-head"><h2 id="h-colour">Colour</h2><span class="sec-tag">--bg --panel --s1…s3 --t1…t4</span></div>
+      <p class="rule">Surfaces step up in small, even amounts. Text uses four tiers. <b>Colour only marks meaning:</b> the selected state, the main action, success and error. Contrast is measured against the page background.</p>
+      <div class="demo"><div class="swatches" id="swatchGrid"></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: a three-stop purple to pink to cyan gradient used on text, buttons, borders and glows, so nothing is more important than anything else.</span><div style="width:220px;height:64px;border-radius:16px;background:var(--grad);box-shadow:0 0 40px rgba(236,72,153,.5)"></div><span class="s-gradtext">AI-Powered</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="type" aria-labelledby="h-type">
+      <div class="sec-head"><h2 id="h-type">Type</h2><span class="sec-tag">Aspekta · 1 family</span></div>
+      <p class="rule">One family, a clear scale and restrained weights. <b>Tracking tightens as size grows</b> and never goes past -0.035em. Monospace is only for code and keys.</p>
+      <div class="demo" id="typeScale"></div>
+    </section>
+
+    <section class="sec" id="space" aria-labelledby="h-space">
+      <div class="sec-head"><h2 id="h-space">Spacing</h2><span class="sec-tag">4 · 6 · 8 · 10 · 12 · 16 · 20 · 24 · 28 · 40 · 64</span></div>
+      <p class="rule">Tight inside a group, generous between groups. Areas are separated by space and fills, not borders.</p>
+      <div class="demo" id="spaceScale"></div>
+    </section>
+
+    <section class="sec" id="radius" aria-labelledby="h-radius">
+      <div class="sec-head"><h2 id="h-radius">Radius</h2><span class="sec-tag">5 · 7 · 9 · 12 · 16 · 22 · pill</span></div>
+      <p class="rule">Radius grows with the size of the thing. <b>Pills are only for small chips</b>, never for every button.</p>
+      <div class="demo"><div class="radii" id="radii"></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: rounded-full on everything, including large buttons, inputs and cards.</span><span class="s-btn">Get Started 🚀</span><span class="s-input">🔍 Search fonts with AI...</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="icons" aria-labelledby="h-icons">
+      <div class="sec-head"><h2 id="h-icons">Icons</h2><span class="sec-tag">24 grid · 1.75 stroke · currentColor</span></div>
+      <p class="rule">One drawn set, one stroke weight, coloured by the text around it. Icons sit beside a label unless the control has an accessible name.</p>
+      <div class="demo"><div class="icons" id="iconGrid"></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: emoji standing in for icons, each with its own colour, style and size.</span><span class="s-emoji">🚀</span><span class="s-emoji">🤖</span><span class="s-emoji">🎯</span><span class="s-emoji">🔒</span><span class="s-emoji">💡</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="button" aria-labelledby="h-button">
+      <div class="sec-head"><h2 id="h-button">Button</h2><span class="sec-tag">.btn · .btn.primary · .btn.lg</span></div>
+      <p class="rule"><b>One primary per area.</b> The label names the action ("Get code", not "Submit"). Secondary actions use the quiet fill.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Primary</span><button type="button" class="btn primary"><svg class="ic sm"><use href="#i-code"/></svg>Get code</button></div>
+          <div class="state"><span class="state-label">Hover</span><button type="button" class="btn primary is-hover" tabindex="-1">Get code</button></div>
+          <div class="state"><span class="state-label">Focus</span><button type="button" class="btn primary is-focus" tabindex="-1">Get code</button></div>
+          <div class="state"><span class="state-label">Loading</span><button type="button" class="btn primary" disabled aria-busy="true"><span class="spin" aria-hidden="true"></span>Loading</button></div>
+          <div class="state"><span class="state-label">Secondary</span><button type="button" class="btn"><svg class="ic sm"><use href="#i-link"/></svg>Copy link</button></div>
+          <div class="state"><span class="state-label">Disabled</span><button type="button" class="btn" disabled>Copy link</button></div>
+          <div class="state"><span class="state-label">Large</span><button type="button" class="btn primary lg">Get started</button></div>
+        </div>
+        <div class="demo-foot"><pre>&lt;button class="btn primary"&gt;Get code&lt;/button&gt;
+&lt;button class="btn"&gt;Copy link&lt;/button&gt;</pre><button type="button" class="copy"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: gradient pill, double glow, scales up on hover, emoji in the label.</span><span class="s-btn">Export Code 🚀</span><span class="s-ghost">▶ Watch Demo</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="icon-button" aria-labelledby="h-iconbtn">
+      <div class="sec-head"><h2 id="h-iconbtn">Icon button</h2><span class="sec-tag">.icon-btn</span></div>
+      <p class="rule">For a single, well-known action. <b>Always give it an aria-label</b> that says what happens.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Default</span><button type="button" class="icon-btn" aria-label="Show preview in dark mode"><svg class="ic"><use href="#i-moon"/></svg></button></div>
+          <div class="state"><span class="state-label">Hover</span><button type="button" class="icon-btn is-hover" tabindex="-1" aria-label="Show preview in light mode"><svg class="ic"><use href="#i-sun"/></svg></button></div>
+          <div class="state"><span class="state-label">Focus</span><button type="button" class="icon-btn is-focus" tabindex="-1" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button></div>
+        </div>
+        <div class="demo-foot"><pre>&lt;button class="icon-btn" aria-label="Close"&gt;
+  &lt;svg class="ic"&gt;&lt;use href="#i-x"/&gt;&lt;/svg&gt;
+&lt;/button&gt;</pre><button type="button" class="copy"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="input" aria-labelledby="h-input">
+      <div class="sec-head"><h2 id="h-input">Search input</h2><span class="sec-tag">.search</span></div>
+      <p class="rule">The placeholder says what you can find, with the real count. The key hint shows the shortcut. Focus is a thin ring, not a glow.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Default</span><label class="search"><svg class="ic"><use href="#i-search"/></svg><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search fonts</span><input type="text" placeholder="Search 180 Google Fonts" autocomplete="off" spellcheck="false"><kbd>/</kbd></label></div>
+          <div class="state"><span class="state-label">Focus</span><div class="search is-focus"><svg class="ic"><use href="#i-search"/></svg><input type="text" value="playfair" tabindex="-1" aria-label="Search fonts, focus example" readonly><kbd>/</kbd></div></div>
+        </div>
+        <div class="demo-foot"><pre>&lt;label class="search"&gt;
+  &lt;svg class="ic"&gt;&lt;use href="#i-search"/&gt;&lt;/svg&gt;
+  &lt;input type="text" placeholder="Search 180 Google Fonts"&gt;
+  &lt;kbd&gt;/&lt;/kbd&gt;
+&lt;/label&gt;</pre><button type="button" class="copy"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: rounded-full, glowing border, "with AI" in the placeholder when no AI is involved.</span><span class="s-input">🔍 Search fonts with AI...</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="dropdown" aria-labelledby="h-dropdown">
+      <div class="sec-head"><h2 id="h-dropdown">Dropdown</h2><span class="sec-tag">.dd · role=listbox</span></div>
+      <p class="rule"><b>Never a native select.</b> Arrow keys move, Enter picks, Escape closes and returns focus, clicking outside closes. Options that can't be chosen stay visible and say why.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Live, try the keyboard</span><div class="dd" id="ddDemo"></div></div>
+          <div class="state"><span class="state-label">Open, with unavailable options</span>
+            <ul class="dd-pop static" role="listbox" aria-label="Heading weight, example">
+              <li class="dd-opt" role="option" aria-selected="true"><svg class="ic sm tick"><use href="#i-check"/></svg><span>400 Regular</span></li>
+              <li class="dd-opt" role="option" aria-selected="false" aria-disabled="true"><svg class="ic sm tick"><use href="#i-check"/></svg><span>700 Bold</span><span class="dd-sub">Not in font</span></li>
+              <li class="dd-opt" role="option" aria-selected="false" aria-disabled="true"><svg class="ic sm tick"><use href="#i-check"/></svg><span>800 Extra bold</span><span class="dd-sub">Not in font</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="demo-foot"><pre>&lt;div class="dd"&gt;
+  &lt;button class="dd-btn" aria-haspopup="listbox" aria-expanded="false"&gt;
+    &lt;span class="dd-k"&gt;Weight&lt;/span&gt;&lt;span&gt;700&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;ul class="dd-pop" role="listbox" hidden&gt;…&lt;/ul&gt;
+&lt;/div&gt;</pre><button type="button" class="copy"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div>
+      </div>
+    </section>
+
+    <section class="sec" id="segmented" aria-labelledby="h-seg">
+      <div class="sec-head"><h2 id="h-seg">Segmented control</h2><span class="sec-tag">.seg · role=radiogroup</span></div>
+      <p class="rule">For two to four views of the same thing. The selected segment is a step lighter, not a colour.</p>
+      <div class="demo">
+        <div class="demo-row"><div class="state"><span class="state-label">Live, arrow keys switch</span><div class="seg" role="radiogroup" aria-label="Preview" id="segDemo"></div></div></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: the selected segment is a glowing gradient pill.</span><span class="s-pill">💻 Website</span><span class="s-chip">📱 App</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="chip" aria-labelledby="h-chip">
+      <div class="sec-head"><h2 id="h-chip">Chip</h2><span class="sec-tag">.chip · role=radio</span></div>
+      <p class="rule">Small filters. The only place a pill shape is used. Selected is inverted: light on dark.</p>
+      <div class="demo">
+        <div class="demo-row"><div class="state"><span class="state-label">Live</span><div class="chips" role="radiogroup" aria-label="Category" id="chipDemo"></div></div></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: gradient fill, glow, and decorative badges that don't filter anything.</span><span class="s-chip on">All</span><span class="s-chip">Sans serif</span><span class="s-badge">⚡ Lightning Fast</span><span class="s-badge">🤖 AI-Powered</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="swatch" aria-labelledby="h-swatch">
+      <div class="sec-head"><h2 id="h-swatch">Swatch</h2><span class="sec-tag">.sw · role=radio</span></div>
+      <p class="rule">Picks a colour for the preview, not for the tool. Each swatch has a name for screen readers. The selected one gets a ring.</p>
+      <div class="demo"><div class="demo-row"><div class="state"><span class="state-label">Live</span><div class="sws" role="radiogroup" aria-label="Accent colour" id="swDemo"></div></div></div></div>
+    </section>
+
+    <section class="sec" id="tabs" aria-labelledby="h-tabs">
+      <div class="sec-head"><h2 id="h-tabs">Tabs</h2><span class="sec-tag">.tabs · role=tablist</span></div>
+      <p class="rule">Switch between versions of the same content, like code for different stacks. Left and right arrows move between tabs.</p>
+      <div class="demo"><div class="demo-row"><div class="state"><span class="state-label">Live</span><div><div class="tabs" role="tablist" aria-label="Platform" id="tabDemo"></div><p class="tab-panel" id="tabPanel" role="tabpanel"></p></div></div></div></div>
+    </section>
+
+    <section class="sec" id="slot" aria-labelledby="h-slot">
+      <div class="sec-head"><h2 id="h-slot">Font slot</h2><span class="sec-tag">.slot · role=radio</span></div>
+      <p class="rule">Shows which font each role uses, in that font. <b>Its state is always written out:</b> Editing, Previewing or Loading. The meta line gives facts, not praise.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Selected</span><div class="slot on"><span class="slot-label">Headings</span><span class="slot-state">Editing</span><span class="slot-name" style="font-family:'Fraunces',serif">Fraunces</span><span class="slot-meta">Serif · 9 weights</span></div></div>
+          <div class="state"><span class="state-label">Previewing</span><div class="slot on previewing"><span class="slot-label">Headings</span><span class="slot-state">Previewing</span><span class="slot-name" style="font-family:'Poppins',sans-serif">Poppins</span><span class="slot-meta">Sans serif · 7 weights</span></div></div>
+          <div class="state"><span class="state-label">Loading</span><div class="slot"><span class="slot-label">Body text</span><span class="slot-state"><span class="dot" aria-hidden="true"></span>Loading</span><span class="slot-name" style="font-family:'Inter',sans-serif">Inter</span><span class="slot-meta">Sans serif</span></div></div>
+          <div class="state"><span class="state-label">Failed</span><div class="slot"><span class="slot-label">Body text</span><span class="slot-state"></span><span class="slot-name">Nope Font</span><span class="slot-meta" style="color:var(--err)">Could not load</span></div></div>
+        </div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: glow ring, emoji in the label, and no clear state.</span><div class="s-card"><small>🎯 Headings</small><b>Fraunces</b></div></div>
+      </div>
+    </section>
+
+    <section class="sec" id="option" aria-labelledby="h-option">
+      <div class="sec-head"><h2 id="h-option">List option</h2><span class="sec-tag">.opt · role=option</span></div>
+      <p class="rule">Each font name is set in its own font. Hover or arrow key previews it, a click keeps it. The font in use is labelled, not just highlighted.</p>
+      <div class="demo"><div class="demo-row"><div class="opts" role="listbox" aria-label="Fonts, example">
+        <div class="opt" role="option" aria-selected="false"><span class="opt-name" style="font-family:'Inter',sans-serif">Inter</span><span class="opt-cat">Sans serif</span></div>
+        <div class="opt active" role="option" aria-selected="false"><span class="opt-name" style="font-family:'Roboto',sans-serif">Roboto</span><span class="opt-cat">Sans serif</span></div>
+        <div class="opt current" role="option" aria-selected="true"><span class="opt-name" style="font-family:'Fraunces',serif">Fraunces</span><span class="opt-badge">In use</span></div>
+      </div><div class="state"><span class="state-label">Rows: default, active, in use</span></div></div></div>
+    </section>
+
+    <section class="sec" id="toast" aria-labelledby="h-toast">
+      <div class="sec-head"><h2 id="h-toast">Toast</h2><span class="sec-tag">.toast · aria-live=polite</span></div>
+      <p class="rule">Confirms an action or explains a failure. <b>Errors say what went wrong and what to do next</b>, and stay on screen longer.</p>
+      <div class="demo">
+        <div class="demo-row">
+          <div class="state"><span class="state-label">Success</span><span class="toast">Link copied. It opens with this exact setup.</span></div>
+          <div class="state"><span class="state-label">Error</span><span class="toast err">“Nope Font” isn't on Google Fonts. Check the spelling, then try again.</span></div>
+        </div>
+        <div class="demo-row" style="padding-top:0"><button type="button" class="btn" id="toastOk">Show success toast</button><button type="button" class="btn" id="toastErr">Show error toast</button></div>
+        <div class="demo-row slop-row slop"><span class="slop-note">Slop: celebrates every action and never explains a failure.</span><span class="s-toast">🎉 Link copied! Share the magic with your team ✨</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="codeblock" aria-labelledby="h-code">
+      <div class="sec-head"><h2 id="h-code">Code block</h2><span class="sec-tag">pre · .copy</span></div>
+      <p class="rule">Labelled with where the code goes. Long lines wrap so nothing hides off to the side. Copy confirms in place.</p>
+      <div class="demo"><div class="demo-row"><div class="code">
+        <div class="code-head"><span>In your CSS</span><button type="button" class="copy"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div>
+<pre>:root {
+  --font-heading: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+}</pre>
+      </div></div></div>
+    </section>
+  </main>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const COLOURS = [
+    { n: "--bg", v: "#04060a", u: "Page" }, { n: "--panel", v: "#0b0f15", u: "Sidebar, panels" },
+    { n: "--s1", v: "#121721", u: "Controls" }, { n: "--s2", v: "#181e29", u: "Hover, selected" },
+    { n: "--s3", v: "#202735", u: "Pressed, tracks" }, { n: "--line", v: "#222936", u: "Rare dividers" },
+    { n: "--t1", v: "#f4f7fb", u: "Primary text", text: true }, { n: "--t2", v: "#cdd5e1", u: "Body text", text: true },
+    { n: "--t3", v: "#a0aabb", u: "Secondary", text: true }, { n: "--t4", v: "#7f8a9d", u: "Hints, meta", text: true },
+    { n: "--ok", v: "#5fd4a0", u: "Success", text: true }, { n: "--err", v: "#f0727a", u: "Error", text: true }
+  ];
+  const lum = hex => {
+    const c = hex.match(/\w\w/g).map(x => parseInt(x, 16) / 255).map(x => (x <= .03928 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4)));
+    return .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
+  };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + .05) / (y + .05); };
+  $("#swatchGrid").innerHTML = COLOURS.map(c => {
+    const r = ratio(c.v, "#04060a");
+    const note = c.text ? `${r.toFixed(1)}:1 on --bg${r >= 4.5 ? "" : " · large text only"}` : c.u;
+    return `<div class="swatch"><div class="swatch-chip" style="background:${c.v}"></div><div class="swatch-body"><b>${c.n}</b><span>${c.v}</span><small>${c.text ? c.u + " · " + note : note}</small></div></div>`;
+  }).join("");
+
+  const TYPE = [
+    { m: "74 / 650 / -.035", s: "font-size:74px;font-weight:650;letter-spacing:-.035em;line-height:1.04", t: "Landing headline" },
+    { m: "44 / 650 / -.03", s: "font-size:44px;font-weight:650;letter-spacing:-.03em;line-height:1.08", t: "Page title" },
+    { m: "22 / 620 / -.02", s: "font-size:22px;font-weight:620;letter-spacing:-.02em", t: "Section heading" },
+    { m: "16 / 600", s: "font-size:16px;font-weight:600", t: "Panel title, brand" },
+    { m: "15 / 400", s: "font-size:15px", t: "Body text that people actually read" },
+    { m: "13 / 500", s: "font-size:13px;font-weight:500", t: "Controls and buttons" },
+    { m: "12 / 400", s: "font-size:12px;color:var(--t4)", t: "Meta, hints and labels" },
+    { m: "12.5 mono", s: "font:12.5px var(--mono);color:var(--t2)", t: "--font-heading: \"Fraunces\";" }
+  ];
+  $("#typeScale").innerHTML = TYPE.map(t => `<div class="type-row"><span class="type-meta">${t.m}</span><span class="type-sample" style='${t.s}'>${esc(t.t)}</span></div>`).join("");
+
+  $("#spaceScale").innerHTML = [4, 6, 8, 10, 12, 16, 20, 24, 28, 40, 64].map(v => `<div class="space-row"><span class="type-meta">${v}px</span><span class="space-bar" style="width:${v * 4}px;max-width:100%"></span></div>`).join("");
+
+  $("#radii").innerHTML = [[5, "Key hint"], [7, "Segment, tab"], [9, "Button, input"], [12, "Slot, swatch card"], [16, "Demo panel"], [22, "Large panel"], [99, "Chip only"]]
+    .map(([r, u]) => `<div class="radius"><i style="border-radius:${r}px"></i>${r === 99 ? "pill" : r + "px"}<small>${u}</small></div>`).join("");
+
+  const ICONS = ["search", "swap", "shuffle", "link", "code", "copy", "check", "sun", "moon", "chev", "monitor", "phone", "split", "x", "plus", "arrow", "lock"];
+  $("#iconGrid").innerHTML = ICONS.map(n => `<div class="icon-cell"><svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>${n}</div>`).join("");
+
+  function radioGroup(root, items, value, render, onChange) {
+    let cur = value;
+    root.innerHTML = items.map(render).join("");
+    const btns = [...root.querySelectorAll("[role=radio]")];
+    const paint = () => btns.forEach(b => { const on = b.dataset.v === cur; b.setAttribute("aria-checked", String(on)); b.tabIndex = on ? 0 : -1; });
+    btns.forEach((b, i) => {
+      b.addEventListener("click", () => { cur = b.dataset.v; paint(); onChange && onChange(cur); });
+      b.addEventListener("keydown", e => {
+        const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        const n = btns[(i + d + btns.length) % btns.length];
+        cur = n.dataset.v; paint(); n.focus(); onChange && onChange(cur);
+      });
+    });
+    paint();
+  }
+  radioGroup($("#segDemo"), [["both", "Both", "split"], ["site", "Website", "monitor"], ["app", "App", "phone"]], "both",
+    ([v, l, i]) => `<button type="button" role="radio" data-v="${v}"><svg class="ic sm"><use href="#i-${i}"/></svg>${l}</button>`);
+  radioGroup($("#chipDemo"), [["all", "All"], ["sans", "Sans serif"], ["serif", "Serif"], ["display", "Display"], ["hand", "Handwriting"], ["mono", "Monospace"]], "all",
+    ([v, l]) => `<button type="button" class="chip" role="radio" data-v="${v}">${l}</button>`);
+  radioGroup($("#swDemo"), [["#3b5bdb", "Blue"], ["#1f7a5c", "Green"], ["#b4532a", "Terracotta"], ["#c0262d", "Red"], ["#6d4bd8", "Violet"]], "#3b5bdb",
+    ([v, l]) => `<button type="button" class="sw" role="radio" data-v="${v}" style="--c:${v}" aria-label="${l}" title="${l}"></button>`);
+
+  const TABS = [["css", "HTML + CSS", "A <link> tag and two CSS variables."], ["tailwind", "Tailwind", "An @import and a @theme block for v4."], ["next", "Next.js", "next/font/google with only the weights you picked."], ["flutter", "Flutter", "A ThemeData built with google_fonts."], ["expo", "Expo", "useFonts with the exact @expo-google-fonts packages."]];
+  let tab = 0;
+  const tabRoot = $("#tabDemo"), panel = $("#tabPanel");
+  function paintTabs(focus) {
+    tabRoot.innerHTML = TABS.map(([v, l], i) => `<button type="button" role="tab" id="t-${v}" aria-controls="tabPanel" aria-selected="${i === tab}" tabindex="${i === tab ? 0 : -1}" data-i="${i}">${l}</button>`).join("");
+    panel.textContent = TABS[tab][2];
+    panel.setAttribute("aria-labelledby", "t-" + TABS[tab][0]);
+    if (focus) tabRoot.children[tab].focus();
+  }
+  tabRoot.addEventListener("click", e => { const b = e.target.closest("[role=tab]"); if (b) { tab = +b.dataset.i; paintTabs(); } });
+  tabRoot.addEventListener("keydown", e => { const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!d) return; e.preventDefault(); tab = (tab + d + TABS.length) % TABS.length; paintTabs(true); });
+  paintTabs();
+
+  (function dropdown(root) {
+    const OPTS = [{ v: 400, l: "400 Regular" }, { v: 500, l: "500 Medium" }, { v: 600, l: "600 Semibold" }, { v: 700, l: "700 Bold" }, { v: 800, l: "800 Extra bold" }, { v: 900, l: "900 Black", disabled: true, sub: "Not in font" }];
+    let value = 700, act = 0;
+    root.innerHTML = `<button type="button" class="dd-btn" id="dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="dd-pop"><span class="dd-k">Weight</span><span class="dd-v"></span><svg class="ic sm"><use href="#i-chev"/></svg></button><ul class="dd-pop" id="dd-pop" role="listbox" tabindex="-1" aria-label="Weight" hidden></ul>`;
+    const btn = root.querySelector(".dd-btn"), pop = root.querySelector(".dd-pop");
+    const label = () => { root.querySelector(".dd-v").textContent = value; };
+    function build() {
+      pop.innerHTML = OPTS.map((o, i) => `<li class="dd-opt" role="option" id="dd-o${i}" aria-selected="${o.v === value}"${o.disabled ? ' aria-disabled="true"' : ""} data-i="${i}"><svg class="ic sm tick"><use href="#i-check"/></svg><span>${o.l}</span>${o.sub ? `<span class="dd-sub">${o.sub}</span>` : ""}</li>`).join("");
+    }
+    function paint() { [...pop.children].forEach((li, i) => li.classList.toggle("active", i === act)); pop.setAttribute("aria-activedescendant", "dd-o" + act); }
+    function open() { build(); act = OPTS.findIndex(o => o.v === value); pop.hidden = false; btn.setAttribute("aria-expanded", "true"); pop.focus(); paint(); document.addEventListener("pointerdown", outside, true); }
+    function close(refocus) { if (pop.hidden) return; pop.hidden = true; btn.setAttribute("aria-expanded", "false"); document.removeEventListener("pointerdown", outside, true); if (refocus) btn.focus(); }
+    function outside(e) { if (!root.contains(e.target)) close(false); }
+    function move(d) { let i = act; for (let k = 0; k < OPTS.length; k++) { i = (i + d + OPTS.length) % OPTS.length; if (!OPTS[i].disabled) break; } act = i; paint(); }
+    function choose(i) { if (OPTS[i].disabled) return; value = OPTS[i].v; label(); close(true); }
+    btn.addEventListener("click", () => (pop.hidden ? open() : close(true)));
+    btn.addEventListener("keydown", e => { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); open(); } });
+    pop.addEventListener("keydown", e => {
+      if (e.key === "ArrowDown") { e.preventDefault(); move(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); move(-1); }
+      else if (e.key === "Home") { e.preventDefault(); act = -1; move(1); }
+      else if (e.key === "End") { e.preventDefault(); act = OPTS.length; move(-1); }
+      else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(act); }
+      else if (e.key === "Escape") { e.preventDefault(); close(true); }
+      else if (e.key === "Tab") close(false);
+    });
+    pop.addEventListener("click", e => { const li = e.target.closest(".dd-opt"); if (li) choose(+li.dataset.i); });
+    pop.addEventListener("pointermove", e => { const li = e.target.closest(".dd-opt"); if (li && !OPTS[+li.dataset.i].disabled && +li.dataset.i !== act) { act = +li.dataset.i; paint(); } });
+    label();
+  })($("#ddDemo"));
+
+  function toast(msg, err) {
+    const el = document.createElement("div");
+    el.className = "toast" + (err ? " err" : "");
+    el.textContent = msg;
+    $("#toasts").append(el);
+    setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 220); }, err ? 4600 : 2600);
+  }
+  $("#toastOk").addEventListener("click", () => toast("Link copied. It opens with this exact setup."));
+  $("#toastErr").addEventListener("click", () => toast("“Nope Font” isn't on Google Fonts. Check the spelling, then try again.", true));
+
+  async function copyText(t) {
+    try { await navigator.clipboard.writeText(t); return true; }
+    catch (e) {
+      const ta = document.createElement("textarea"); ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.append(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch (e2) { ok = false; } ta.remove(); return ok;
+    }
+  }
+  document.addEventListener("click", async e => {
+    const b = e.target.closest(".copy");
+    if (!b) return;
+    const pre = b.closest(".demo-foot, .code").querySelector("pre");
+    const ok = await copyText(pre.textContent);
+    if (!ok) { toast("Your browser blocked the clipboard. Select the code and copy it manually.", true); return; }
+    b.innerHTML = '<svg class="ic sm"><use href="#i-check"/></svg>Copied';
+    setTimeout(() => { b.innerHTML = '<svg class="ic sm"><use href="#i-copy"/></svg>Copy'; }, 1600);
+  });
+
+  const sw = $("#compare");
+  function setCompare(on) {
+    document.body.classList.toggle("compare", on);
+    sw.setAttribute("aria-checked", String(on));
+    try { localStorage.setItem("fr-compare", on ? "1" : "0"); } catch (e) {}
+  }
+  sw.addEventListener("click", () => setCompare(sw.getAttribute("aria-checked") !== "true"));
+  try { if (localStorage.getItem("fr-compare") === "1") setCompare(true); } catch (e) {}
+
+  const links = [...document.querySelectorAll(".toc a[href^='#']")];
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      links.forEach(a => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + en.target.id)));
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll(".sec").forEach(s => io.observe(s));
+})();
+</script>
+</body>
+</html>

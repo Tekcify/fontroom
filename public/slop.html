@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FontGenius AI ✨ - Revolutionize Your Typography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:#f4f7fb;-webkit-font-smoothing:antialiased;overflow-x:clip}
+
+:root{--bg:#070712;--panel:rgba(255,255,255,.035);--s1:rgba(255,255,255,.06);--s2:rgba(139,92,246,.16);--s3:rgba(139,92,246,.32);--line:rgba(255,255,255,.1);--t3:#b4b4d0;--t4:#8f8fb0;--ui:"Inter",system-ui,sans-serif;--grad:linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#06b6d4 100%)}
+html,body{height:auto}
+body{background:#070712;font-family:"Inter",system-ui,sans-serif;font-feature-settings:normal}
+.blob{position:fixed;z-index:-1;border-radius:50%;filter:blur(120px);opacity:.55;animation:float 14s ease-in-out infinite alternate;pointer-events:none}
+.blob.a{width:620px;height:620px;background:#7c3aed;top:-180px;left:-160px}
+.blob.b{width:520px;height:520px;background:#db2777;top:30%;right:-180px;animation-delay:-5s}
+.blob.c{width:480px;height:480px;background:#0891b2;bottom:-160px;left:30%;animation-delay:-9s}
+@keyframes float{to{transform:translate(80px,60px) scale(1.15)}}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s-wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.s-nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(7,7,18,.55);border-bottom:1px solid rgba(255,255,255,.08)}
+.s-nav .s-wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.s-logo{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.s-links{display:flex;gap:32px;color:#c4c4dc;font-weight:500}
+.s-links a{color:inherit;text-decoration:none}
+.s-links a:hover{color:#fff}
+.s-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:9999px;background:var(--grad);color:#fff;font-weight:700;font-size:16px;text-decoration:none;box-shadow:0 0 30px rgba(236,72,153,.45),0 10px 30px rgba(139,92,246,.4);transition:all .3s ease;border:0;cursor:pointer}
+.s-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 0 50px rgba(236,72,153,.7),0 20px 40px rgba(139,92,246,.6)}
+.s-btn.sm{padding:10px 22px;font-size:14px}
+.s-btn.ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);box-shadow:none;backdrop-filter:blur(10px)}
+.s-hero{text-align:center;padding:110px 0 70px}
+.s-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:9999px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.45);color:#d8c8ff;font-size:14px;font-weight:600;box-shadow:0 0 24px rgba(139,92,246,.35)}
+.s-hero h1{font-size:clamp(44px,7vw,84px);line-height:1.05;font-weight:800;letter-spacing:-.04em;margin:28px auto 24px;max-width:1000px}
+.s-hero p{font-size:20px;color:#b4b4d0;max-width:720px;margin:0 auto 40px;line-height:1.6}
+.s-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.s-trust{margin-top:36px;color:#9a9ab8;font-size:15px}
+.s-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin:30px 0 90px}
+.s-stat{text-align:center;padding:32px 16px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px)}
+.s-stat b{display:block;font-size:48px;font-weight:800;letter-spacing:-.03em}
+.s-stat span{color:#a5a5c4;font-weight:500}
+.s-sec{padding:90px 0}
+.s-head{text-align:center;margin-bottom:56px}
+.s-head h2{font-size:clamp(36px,4.5vw,56px);font-weight:800;letter-spacing:-.03em;margin:20px 0 16px}
+.s-head p{color:#b4b4d0;font-size:19px;max-width:640px;margin:0 auto}
+#playground .app{height:880px;max-width:1400px;margin:0 auto;border-radius:32px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);backdrop-filter:blur(24px);box-shadow:0 0 0 1px rgba(139,92,246,.25),0 0 120px rgba(139,92,246,.35),0 40px 80px rgba(0,0,0,.5);overflow:hidden}
+#playground .side{border-right:1px solid rgba(255,255,255,.08)}
+#playground .brand-mark{background:var(--grad);color:#fff;box-shadow:0 0 20px rgba(236,72,153,.6)}
+#playground .slot{border:1px solid rgba(255,255,255,.08);border-radius:18px}
+#playground .slot[aria-checked=true]{box-shadow:0 0 0 2px #8b5cf6,0 0 30px rgba(139,92,246,.55);background:rgba(139,92,246,.12)}
+#playground .btn{border-radius:9999px;border:1px solid rgba(255,255,255,.12);transition:all .3s ease}
+#playground .btn:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(139,92,246,.5)}
+#playground .btn.primary{background:var(--grad);color:#fff;border:0;box-shadow:0 0 24px rgba(236,72,153,.5)}
+#playground .search{border-radius:9999px;border:1px solid rgba(255,255,255,.12)}
+#playground .search:focus-within{box-shadow:0 0 0 2px #8b5cf6,0 0 24px rgba(139,92,246,.6)}
+#playground .chip{border:1px solid rgba(255,255,255,.12)}
+#playground .chip[aria-checked=true]{background:linear-gradient(90deg,#8b5cf6,#06b6d4);color:#fff;border-color:transparent;box-shadow:0 0 16px rgba(6,182,212,.5)}
+#playground .opt:hover,#playground .opt.active{background:linear-gradient(90deg,rgba(139,92,246,.25),rgba(236,72,153,.12))}
+#playground .opt-badge{background:var(--grad);color:#fff}
+#playground .toolbar{background:rgba(255,255,255,.03);backdrop-filter:blur(12px)}
+#playground .seg,#playground .dd-btn,#playground .swatches,#playground .icon-btn{border-radius:9999px;border:1px solid rgba(255,255,255,.1)}
+#playground .seg button{border-radius:9999px}
+#playground .seg button[aria-checked=true]{background:var(--grad);color:#fff;box-shadow:0 0 16px rgba(236,72,153,.45)}
+#playground .dd-pop{background:rgba(20,16,40,.85);backdrop-filter:blur(20px);border:1px solid rgba(139,92,246,.35);border-radius:18px;box-shadow:0 0 40px rgba(139,92,246,.4)}
+#playground .browser,#playground .phone{box-shadow:0 0 60px rgba(139,92,246,.45),0 30px 60px rgba(0,0,0,.6)}
+#playground .browser{border-radius:20px}
+.drawer{background:rgba(20,16,40,.92);backdrop-filter:blur(24px);border-left:1px solid rgba(139,92,246,.4)}
+.tabs button[aria-selected=true]{background:var(--grad);color:#fff}
+.s-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.s-card{position:relative;padding:36px 30px;border-radius:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px);transition:all .4s ease}
+.s-card:hover{transform:translateY(-8px);border-color:rgba(139,92,246,.6);box-shadow:0 0 50px rgba(139,92,246,.35),0 20px 40px rgba(0,0,0,.4)}
+.s-emoji{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:var(--grad);box-shadow:0 0 30px rgba(236,72,153,.45)}
+.s-card h3{font-size:22px;font-weight:700;margin:22px 0 10px}
+.s-card p{color:#a9a9c6;line-height:1.65;margin:0}
+.s-stars{color:#fbbf24;font-size:18px;letter-spacing:2px}
+.s-quote{font-size:17px;color:#dcdcf0 !important;margin:16px 0 22px !important}
+.s-person{display:flex;align-items:center;gap:14px}
+.s-person i{width:48px;height:48px;border-radius:50%;background:var(--grad)}
+.s-person b{display:block}
+.s-person span{color:#9a9ab8;font-size:14px}
+.s-price{text-align:center}
+.s-price.pop{border:2px solid #8b5cf6;box-shadow:0 0 60px rgba(139,92,246,.5);transform:scale(1.05)}
+.s-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:9999px;background:var(--grad);font-size:13px;font-weight:700;white-space:nowrap}
+.s-amt{font-size:56px;font-weight:800;margin:14px 0 4px;letter-spacing:-.03em}
+.s-price ul{list-style:none;padding:0;margin:26px 0 30px;text-align:left;color:#c4c4dc;line-height:2.1}
+.s-faq{max-width:800px;margin:0 auto;display:grid;gap:14px}
+.s-faq details{padding:22px 26px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.s-faq summary{font-weight:600;font-size:18px;cursor:pointer}
+.s-faq p{color:#a9a9c6;margin:14px 0 0;line-height:1.7}
+.s-cta{text-align:center;padding:80px 32px;border-radius:40px;background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(236,72,153,.25),rgba(6,182,212,.3));border:1px solid rgba(255,255,255,.15);box-shadow:0 0 100px rgba(139,92,246,.35);margin:60px 0 100px}
+.s-cta h2{font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-.03em;margin:0 0 18px}
+.s-cta p{color:#d0d0e8;font-size:19px;margin:0 0 36px}
+.s-foot{border-top:1px solid rgba(255,255,255,.08);padding:40px 0;color:#8f8fb0;text-align:center}
+@media (max-width:980px){.s-links{display:none}.s-stats,.s-cards{grid-template-columns:1fr 1fr}#playground .app{height:auto}.s-price.pop{transform:none}}
+@media (max-width:600px){.s-stats,.s-cards{grid-template-columns:1fr}.s-nav .s-btn{display:none}}
+
+.s-visual{display:flex;justify-content:center;margin:10px 0 70px}
+.s-glass{position:relative;width:min(900px,100%);padding:60px 32px;border-radius:32px;text-align:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(24px);box-shadow:0 0 0 1px rgba(139,92,246,.25),0 0 120px rgba(139,92,246,.4),0 40px 80px rgba(0,0,0,.5)}
+.s-aa{display:block;font-size:clamp(120px,20vw,220px);font-weight:800;line-height:1;letter-spacing:-.05em;filter:drop-shadow(0 0 40px rgba(236,72,153,.45))}
+.s-floats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:28px 0 32px}
+.s-floats span{padding:8px 16px;border-radius:9999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);font-weight:600;font-size:14px;animation:bob 3s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-6px)}}
+.s-floats span:nth-child(2n){animation-delay:-3s}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="demoNote" role="note" style="position:fixed;z-index:9999;left:16px;right:16px;bottom:16px;margin:0 auto;max-width:560px;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;border-radius:12px;background:#0b0f15;color:#cdd5e1;font:13px/1.45 system-ui,-apple-system,sans-serif;box-shadow:0 12px 32px -8px rgba(0,0,0,.6),inset 0 0 0 1px #222936"><span style="flex:1">This page is the deliberately bad “before” version of Fontroom, made for a talk on cleaning up AI-generated sites. <a href="index.html" style="color:#f4f7fb">See the real one</a></span><button type="button" aria-label="Hide this note" onclick="this.parentNode.remove()" style="flex:none;width:30px;height:30px;border:0;border-radius:8px;background:#181e29;color:#f4f7fb;font:16px/1 system-ui;cursor:pointer">×</button></div>
+
+<div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+<header class="s-nav"><div class="s-wrap">
+  <div class="s-logo">✨ <span class="grad-text">FontGenius AI</span></div>
+  <nav class="s-links"><a href="#features">Features</a><a href="slop-app.html">Playground</a><a href="#testimonials">Testimonials</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+  <a class="s-btn sm" href="slop-app.html">Get Started 🚀</a>
+</div></header>
+<main class="s-wrap">
+  <section class="s-hero">
+    <span class="s-pill">✨ Powered by Advanced AI · Now in Beta 🎉</span>
+    <h1>Revolutionize Your Typography With <span class="grad-text">AI-Powered</span> Font Previews</h1>
+    <p>Unlock the full potential of your designs. Seamlessly visualize, compare, and supercharge your font choices in real-time — no code required. The future of typography is here.</p>
+    <div class="s-ctas"><a class="s-btn" href="slop-app.html">Start Previewing Free →</a><a class="s-btn ghost" href="#features">▶ Watch Demo</a></div>
+    <div class="s-trust">⭐⭐⭐⭐⭐ Trusted by 10,000+ designers worldwide</div>
+  </section>
+  <section class="s-visual"><div class="s-glass"><span class="s-aa grad-text">Aa</span><div class="s-floats"><span>✨ Playfair Display</span><span>🚀 Inter</span><span>🎨 Space Grotesk</span><span>💎 Fraunces</span></div><a class="s-btn" href="slop-app.html">Launch Playground 🚀</a></div></section>
+  <section class="s-stats">
+    <div class="s-stat"><b class="grad-text">1M+</b><span>Fonts Previewed</span></div>
+    <div class="s-stat"><b class="grad-text">50K+</b><span>Happy Users</span></div>
+    <div class="s-stat"><b class="grad-text">99.9%</b><span>Accuracy</span></div>
+    <div class="s-stat"><b class="grad-text">24/7</b><span>AI Support</span></div>
+  </section>
+
+  <section class="s-sec" id="features">
+    <div class="s-head"><span class="s-pill">⚡ Features</span><h2>Everything You Need to <span class="grad-text">Level Up</span></h2><p>Powerful features designed to streamline your workflow and elevate your designs to the next level.</p></div>
+    <div class="s-cards">
+      <div class="s-card"><div class="s-emoji">🚀</div><h3>Lightning Fast</h3><p>Experience blazing-fast font previews powered by cutting-edge technology. No more waiting.</p></div>
+      <div class="s-card"><div class="s-emoji">🤖</div><h3>AI-Powered Pairing</h3><p>Our advanced AI analyzes millions of combinations to find the perfect pairing for your brand.</p></div>
+      <div class="s-card"><div class="s-emoji">🎯</div><h3>Pixel Perfect</h3><p>See exactly how your fonts will look on real websites and mobile apps with stunning accuracy.</p></div>
+      <div class="s-card"><div class="s-emoji">🔒</div><h3>Secure &amp; Private</h3><p>Enterprise-grade security keeps your design choices safe. Your data, your rules.</p></div>
+      <div class="s-card"><div class="s-emoji">💡</div><h3>Smart Suggestions</h3><p>Get intelligent recommendations that adapt to your style and help you make better decisions.</p></div>
+      <div class="s-card"><div class="s-emoji">🌈</div><h3>Seamless Export</h3><p>Export production-ready code for any framework with a single click. It just works.</p></div>
+    </div>
+  </section>
+  <section class="s-sec" id="testimonials">
+    <div class="s-head"><span class="s-pill">💬 Testimonials</span><h2>Loved by <span class="grad-text">Designers</span> Everywhere</h2><p>Don't just take our word for it — hear what our amazing community has to say.</p></div>
+    <div class="s-cards">
+      <div class="s-card"><div class="s-stars">★★★★★</div><p class="s-quote">"FontGenius AI completely transformed our design process. It's a total game-changer!"</p><div class="s-person"><i></i><div><b>Sarah Johnson</b><span>Senior Designer at TechCorp</span></div></div></div>
+      <div class="s-card"><div class="s-stars">★★★★★</div><p class="s-quote">"I can't imagine going back. This tool saved our team countless hours every single week."</p><div class="s-person"><i></i><div><b>Michael Chen</b><span>Product Lead at InnovateCo</span></div></div></div>
+      <div class="s-card"><div class="s-stars">★★★★★</div><p class="s-quote">"Absolutely incredible. The AI pairings are spot on every time. Highly recommend!"</p><div class="s-person"><i></i><div><b>Emily Rodriguez</b><span>Founder at DesignHub</span></div></div></div>
+    </div>
+  </section>
+  <section class="s-sec" id="pricing">
+    <div class="s-head"><span class="s-pill">💎 Pricing</span><h2>Simple, <span class="grad-text">Transparent</span> Pricing</h2><p>Choose the perfect plan for your needs. No hidden fees, cancel anytime.</p></div>
+    <div class="s-cards">
+      <div class="s-card s-price"><h3>Starter</h3><div class="s-amt">$0</div><p>Perfect for getting started</p><ul><li>✅ 10 previews per day</li><li>✅ Basic font library</li><li>✅ Community support</li></ul><a class="s-btn ghost" href="slop-app.html">Get Started</a></div>
+      <div class="s-card s-price pop"><span class="s-badge">🔥 Most Popular</span><h3>Pro</h3><div class="s-amt grad-text">$19</div><p>For professionals who want more</p><ul><li>✅ Unlimited previews</li><li>✅ AI-powered pairing</li><li>✅ Code export</li><li>✅ Priority support</li></ul><a class="s-btn" href="slop-app.html">Start Free Trial</a></div>
+      <div class="s-card s-price"><h3>Enterprise</h3><div class="s-amt">Custom</div><p>For teams at scale</p><ul><li>✅ Everything in Pro</li><li>✅ SSO &amp; SAML</li><li>✅ Dedicated manager</li></ul><a class="s-btn ghost" href="slop-app.html">Contact Sales</a></div>
+    </div>
+  </section>
+  <section class="s-sec" id="faq">
+    <div class="s-head"><span class="s-pill">❓ FAQ</span><h2>Frequently Asked <span class="grad-text">Questions</span></h2></div>
+    <div class="s-faq">
+      <details><summary>What is FontGenius AI?</summary><p>FontGenius AI is a revolutionary platform that leverages cutting-edge technology to help you visualize fonts in real-world contexts.</p></details>
+      <details><summary>Do I need coding experience?</summary><p>Not at all! Our intuitive interface makes it easy for anyone to get started in seconds.</p></details>
+      <details><summary>Can I cancel anytime?</summary><p>Absolutely. No contracts, no commitments, no hassle.</p></details>
+    </div>
+  </section>
+  <section class="s-cta"><h2>Ready to <span class="grad-text">Transform</span> Your Workflow?</h2><p>Join thousands of designers who are already creating amazing things with FontGenius AI.</p><a class="s-btn" href="slop-app.html">Get Started for Free 🚀</a></section>
+</main>
+<footer class="s-foot">© 2026 FontGenius AI. All rights reserved. Made with ❤️ and AI.</footer>
+
+</body>
+</html>
