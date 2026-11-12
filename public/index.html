@@ -304,11 +304,20 @@
           <p>Save the pairings you like, then flip between them on the same page with <kbd>[</kbd> and <kbd>]</kbd>. No more tabs.</p>
         </div>
         <div class="flipper" id="flipper">
-          <div class="flip-stack" aria-hidden="true">
-            <div class="flip-card" data-pos="0"><b style="font-family:'Fraunces',serif">Bread baked before sunrise</b><p>Order by eight and we deliver it warm, sliced and still crackling.</p><span class="flip-tag">Fraunces <i>+</i> Inter</span></div>
-            <div class="flip-card" data-pos="1"><b style="font-family:'Syne',sans-serif">Ship the release notes</b><p>Every change your team made this week, written for people who use it.</p><span class="flip-tag">Syne <i>+</i> Inter</span></div>
-            <div class="flip-card" data-pos="2"><b style="font-family:'Playfair Display',serif">The quiet return of print</b><p>Why small magazines are selling out their first runs again.</p><span class="flip-tag">Playfair Display <i>+</i> Inter</span></div>
-            <div class="flip-card" data-pos="3"><b style="font-family:'Instrument Serif',serif;font-weight:400">Rooms with morning light</b><p>Three bedrooms, a garden studio and a kitchen that faces east.</p><span class="flip-tag">Instrument Serif <i>+</i> Inter</span></div>
+          <div class="fl-win">
+            <div class="fl-strip" style="--i:0">
+              <i class="fl-mark" aria-hidden="true"></i>
+              <button type="button" class="fl-tab" aria-pressed="true" aria-label="Fraunces and Inter"><b style="font-family:'Fraunces',serif">Aa</b></button>
+              <button type="button" class="fl-tab" aria-pressed="false" aria-label="Syne and Inter"><b style="font-family:'Syne',sans-serif">Aa</b></button>
+              <button type="button" class="fl-tab" aria-pressed="false" aria-label="Playfair Display and Inter"><b style="font-family:'Playfair Display',serif">Aa</b></button>
+              <button type="button" class="fl-tab" aria-pressed="false" aria-label="Instrument Serif and Inter"><b style="font-family:'Instrument Serif',serif;font-weight:400">Aa</b></button>
+            </div>
+            <div class="fl-view" data-p="0" aria-hidden="true">
+              <div class="fl-slide" data-s="on"><b class="fl-h" style="font-family:'Fraunces',serif">Bread baked before sunrise</b><p>Order by eight and we deliver it warm, sliced and still crackling.</p><span class="fl-foot"><span class="fl-btn">Order ahead</span><span class="fl-tag">Fraunces <i>+</i> Inter</span></span></div>
+              <div class="fl-slide" data-s="after"><b class="fl-h" style="font-family:'Syne',sans-serif">Ship the release notes</b><p>Every change your team made this week, written for people who use it.</p><span class="fl-foot"><span class="fl-btn">Read the notes</span><span class="fl-tag">Syne <i>+</i> Inter</span></span></div>
+              <div class="fl-slide" data-s="after"><b class="fl-h" style="font-family:'Playfair Display',serif">The quiet return of print</b><p>Why small magazines are selling out their first runs again.</p><span class="fl-foot"><span class="fl-btn">Subscribe</span><span class="fl-tag">Playfair Display <i>+</i> Inter</span></span></div>
+              <div class="fl-slide" data-s="after"><b class="fl-h" style="font-family:'Instrument Serif',serif;font-weight:400">Rooms with morning light</b><p>Three bedrooms, a garden studio and a kitchen that faces east.</p><span class="fl-foot"><span class="fl-btn">Book a viewing</span><span class="fl-tag">Instrument Serif <i>+</i> Inter</span></span></div>
+            </div>
           </div>
           <div class="flip-ctrl">
             <button type="button" id="flipPrev" aria-label="Previous pairing"><kbd>[</kbd></button>
@@ -401,14 +410,6 @@
       <a href="https://github.com/Tekcify/fontroom">Source code</a>
       <a href="https://github.com/Tekcify/fontroom/issues">Report an issue</a>
       <a href="https://github.com/Tekcify/fontroom/blob/main/CONTRIBUTING.md">Contributing</a>
-    </nav>
-    <nav class="foot-col" aria-label="Credits">
-      <h3>Credits</h3>
-      <a href="https://fonts.google.com">Google Fonts</a>
-      <a href="https://github.com/googlefonts/onest">Onest</a>
-      <a href="https://hugeicons.com">Hugeicons</a>
-      <a href="https://reactbits.dev">Light Rays by React Bits</a>
-      <a href="https://nucleoapp.com">Glass icons by Nucleo</a>
     </nav>
   </div>
   <div class="wrap foot-base">

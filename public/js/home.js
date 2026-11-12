@@ -274,27 +274,33 @@
 
   const flipper = $("flipper");
   if (flipper) {
-    const cards = [...flipper.querySelectorAll(".flip-card")];
+    const slides = [...flipper.querySelectorAll(".fl-slide")];
+    const picks = [...flipper.querySelectorAll(".fl-tab")];
+    const strip = flipper.querySelector(".fl-strip"), view = flipper.querySelector(".fl-view");
     const count = $("flipCount"), prev = $("flipPrev"), next = $("flipNext");
+    const n = slides.length;
     let at = 0;
     count.setAttribute("aria-live", "off");
-    const go = dir => {
-      const from = cards[at];
-      at = (at + dir + cards.length) % cards.length;
-      cards.forEach((c, i) => { c.dataset.pos = String((i - at + cards.length) % cards.length); });
-      if (!reduce) {
-        const el = dir > 0 ? from : cards[at], cls = dir > 0 ? "out" : "in";
-        el.classList.remove("out", "in");
-        void el.offsetWidth;
-        el.classList.add(cls);
-        el.addEventListener("animationend", () => el.classList.remove(cls), { once: true });
-      }
-      count.textContent = `${at + 1} of ${cards.length}`;
+    const show = (to, dir) => {
+      if (to === at) return;
+      const from = slides[at], s = slides[to];
+      at = to;
+      s.classList.add("snap");
+      s.dataset.s = dir > 0 ? "after" : "before";
+      void s.offsetWidth;
+      s.classList.remove("snap");
+      from.dataset.s = dir > 0 ? "before" : "after";
+      s.dataset.s = "on";
+      strip.style.setProperty("--i", String(at));
+      view.dataset.p = String(at);
+      picks.forEach((b, i) => b.setAttribute("aria-pressed", String(i === at)));
+      count.textContent = `${at + 1} of ${n}`;
     };
+    const go = dir => show((at + dir + n) % n, dir);
     const play = autoplay(flipper, 2800, () => go(1));
+    const takeOver = () => { play.stop(); count.setAttribute("aria-live", "polite"); };
     const press = (btn, dir) => {
-      play.stop();
-      count.setAttribute("aria-live", "polite");
+      takeOver();
       const k = btn.querySelector("kbd");
       k.classList.add("press");
       setTimeout(() => k.classList.remove("press"), 140);
@@ -302,6 +308,7 @@
     };
     prev.addEventListener("click", () => press(prev, -1));
     next.addEventListener("click", () => press(next, 1));
+    picks.forEach((b, i) => b.addEventListener("click", () => { takeOver(); show(i, i > at ? 1 : -1); }));
     document.addEventListener("keydown", e => {
       if ((e.key !== "[" && e.key !== "]") || e.metaKey || e.ctrlKey || e.altKey || !play.seen()) return;
       const t = e.target;
@@ -446,8 +453,17 @@
     }
   ];
 
+  const enter = (els, from, step, ms) => {
+    if (reduce) return;
+    els.forEach((el, i) => {
+      if (typeof el.animate !== "function") return;
+      el.animate([from, { opacity: 1, transform: "none", filter: "blur(0px)" }], { duration: ms, delay: Math.min(i, 9) * step, easing: "cubic-bezier(.2,.7,.2,1)", fill: "backwards" });
+    });
+  };
+
   const tplTabs = $("tplTabs"), stageEl = $("stage");
   if (tplTabs && stageEl) {
+    let shown = false;
     tplTabs.innerHTML = TEMPLATES.map((t, i) => `<button type="button" role="tab" id="tpl-${t.key}" aria-controls="stage" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${t.label}</button>`).join("");
     tabs(tplTabs, (i, btn) => {
       const t = TEMPLATES[i];
@@ -456,15 +472,31 @@
       $("tplDomain").textContent = t.domain;
       $("siteBody").innerHTML = t.site;
       $("phoneBody").innerHTML = t.phone;
+      if (!shown) return;
+      const from = { opacity: 0, transform: "translateY(14px)", filter: "blur(4px)" };
+      enter([...$("siteBody").children], from, 70, 560);
+      enter([...$("phoneBody").children].slice(1), from, 45, 520);
     });
     tplTabs.querySelector('[role="tab"]').click();
+    shown = true;
   }
 
   const fonts = $("fonts"), stage = $("stage");
   if (fonts && stage) {
     fonts.innerHTML = PICKS.map((f, i) => `<button type="button" class="font-opt" role="radio" data-i="${i}"><b style="font-family:${esc(f.stack).replace(/"/g, "'")};font-weight:${f.w}">${f.name}</b><span>${CAT_LABEL[f.cat] || ""}</span></button>`).join("");
     const btns = [...fonts.querySelectorAll(".font-opt")];
+    const mark = document.createElement("i");
+    mark.className = "fonts-mark";
+    mark.setAttribute("aria-hidden", "true");
+    fonts.prepend(mark);
+    const place = () => {
+      const b = btns[pick];
+      mark.style.setProperty("--my", `${b.offsetTop}px`);
+      mark.style.setProperty("--mh", `${b.offsetHeight}px`);
+    };
+    let typeset = false;
     const select = (i, focus) => {
+      const changed = i !== pick;
       pick = i;
       const f = PICKS[i];
       stage.style.setProperty("--fh", f.stack);
@@ -473,6 +505,8 @@
         b.setAttribute("aria-checked", String(j === i));
         b.tabIndex = j === i ? 0 : -1;
       });
+      place();
+      if (typeset && changed) enter([...stage.querySelectorAll(".h")], { opacity: 0, transform: "translateY(.32em)", filter: "blur(8px)" }, 38, 620);
       if (focus) btns[i].focus();
       if (fonts.scrollWidth > fonts.clientWidth) {
         const b = btns[i], left = b.offsetLeft - fonts.offsetLeft;
@@ -490,6 +524,9 @@
       });
     });
     select(0);
+    typeset = true;
+    window.addEventListener("resize", place);
+    window.addEventListener("load", place);
 
     const pin = $("tryPin");
     if (pin && !reduce) {
@@ -513,6 +550,9 @@
         if (!on) return;
         const p = (top - pin.getBoundingClientRect().top) / run;
         const i = Math.min(PICKS.length - 1, Math.max(0, Math.floor(p * PICKS.length)));
+        const clamp = v => Math.min(1, Math.max(0, v));
+        pin.style.setProperty("--tp", clamp(p).toFixed(4));
+        pin.style.setProperty("--rp", clamp(p * PICKS.length - i).toFixed(4));
         if (i === last) return;
         last = i;
         if (i !== pick) select(i);

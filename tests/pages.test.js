@@ -155,7 +155,10 @@ test("landing font list pins on scroll and steps through every font before letti
   for (let i = 0; i < opts.length; i++) {
     await scrollTo(top - run * (i + 0.5) / opts.length);
     assert.equal(checked(), i);
+    assert.ok(Math.abs(parseFloat(pin.style.getPropertyValue("--rp")) - 0.5) < 0.01, "the active row fills as you scroll through it");
+    assert.ok(Math.abs(parseFloat(pin.style.getPropertyValue("--tp")) - (i + 0.5) / opts.length) < 0.01);
   }
+  assert.equal($$(".fonts .fonts-mark").length, 1);
   await scrollTo(top - run - 500);
   assert.equal(checked(), opts.length - 1);
   opts[2].click();
@@ -189,7 +192,7 @@ test("how it works steps use Nucleo glass icons in the brand colour", async () =
   const ids = $$("[id]").map(el => el.id);
   assert.equal(new Set(ids).size, ids.length, "no duplicate ids on the page");
   assert.match(read("css/home.css"), /\.step-ic\{[^}]*--nc-gradient-1-color-1:#ff7a52/);
-  assert.ok($$(".foot a").some(a => a.getAttribute("href") === "https://nucleoapp.com"));
+  assert.equal($$('.foot nav[aria-label="Credits"]').length, 0);
   p.w.close();
 });
 
@@ -291,11 +294,17 @@ test("bento flip stack moves with its buttons and the [ and ] keys", async () =>
   const p = openPage("index.html", { visible: true });
   await p.tick(50);
   const { $, $$, key } = p;
-  const pos = () => $$(".flip-card").map(c => c.dataset.pos).join("");
-  assert.equal(pos(), "0123");
+  const states = () => $$(".fl-slide").map(c => c.dataset.s).join(" ");
+  const pressed = () => $$(".fl-tab").findIndex(b => b.getAttribute("aria-pressed") === "true");
+  assert.equal(states(), "on after after after");
+  assert.equal(pressed(), 0);
   $("#flipNext").click();
   assert.equal($("#flipCount").textContent, "2 of 4");
-  assert.equal(pos(), "3012");
+  assert.equal(states(), "before on after after");
+  assert.equal(pressed(), 1);
+  assert.equal($(".fl-strip").style.getPropertyValue("--i"), "1");
+  assert.equal($(".fl-view").dataset.p, "1");
+  assert.ok(!$$(".fl-slide")[1].classList.contains("snap"));
   assert.equal($("#flipCount").getAttribute("aria-live"), "polite");
   key(p.d.body, "[");
   assert.equal($("#flipCount").textContent, "1 of 4");
@@ -303,6 +312,11 @@ test("bento flip stack moves with its buttons and the [ and ] keys", async () =>
   assert.equal($("#flipCount").textContent, "4 of 4");
   key(p.d.body, "]", { metaKey: true });
   assert.equal($("#flipCount").textContent, "4 of 4", "shortcuts with modifiers are left alone");
+  assert.equal(states(), "after after after on");
+  $$(".fl-tab")[1].click();
+  assert.equal($("#flipCount").textContent, "2 of 4");
+  assert.equal(states(), "after on after after", "jumping back brings the pairing in from above");
+  $$(".fl-tab")[3].click();
   await p.tick(3000);
   assert.equal($("#flipCount").textContent, "4 of 4", "autoplay stops once you take over");
   assert.deepEqual(p.errors, []);
