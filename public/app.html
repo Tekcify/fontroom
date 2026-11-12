@@ -8,14 +8,20 @@
 <meta property="og:title" content="Fontroom">
 <meta property="og:description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
 <meta property="og:url" content="https://fontroom.vercel.app/app">
-<meta property="og:image" content="https://fontroom.vercel.app/og.png">
+<meta property="og:image" content="https://fontroom.vercel.app/og.png?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fontroom: see how a font really looks before you ship it">
+<meta name="twitter:image" content="https://fontroom.vercel.app/og.png?v=2">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#04060a">
 <meta name="description" content="Try any Google Font on a real website and mobile app before you touch your code.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/OnestVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -37,6 +43,7 @@
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/></symbol>
   <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
   <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
@@ -61,7 +68,7 @@
 
 <div class="app">
   <aside class="side" aria-label="Fonts">
-    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#f4f7fb"/><path d="M17.8 8.9c-3.1-.8-5.6.6-5.6 3.9V24.4M8.4 14.9h8.4" fill="none" stroke="#04060a" stroke-width="3.2"/><rect x="20.4" y="7.6" width="3" height="16.8" rx="1.5" fill="#ff5a36"/></svg>Fontroom<small id="fontCount"></small></a>
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#13161b"/><path d="M14 54V30a18 18 0 0 1 36 0v24z" fill="#f2f4f7"/><path d="M24 54V31a8 8 0 0 1 16 0v23z" fill="#ff5a36"/></svg>Fontroom<small id="fontCount"></small></a>
 
     <div class="slots" role="radiogroup" aria-label="Which font to change">
       <button type="button" class="slot" role="radio" data-slot="heading">
@@ -165,6 +172,7 @@
     <div><dt><kbd>X</kbd></dt><dd>Swap heading and body fonts</dd></div>
     <div><dt><kbd>R</kbd></dt><dd>Try a random pairing</dd></div>
     <div><dt><kbd>S</kbd></dt><dd>Save or unsave this pairing</dd></div>
+    <div><dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>Flip through saved pairings</dd></div>
     <div><dt><kbd>D</kbd></dt><dd>Switch light and dark preview</dd></div>
     <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Show both, website or app</dd></div>
     <div><dt><kbd>U</kbd></dt><dd>Try your own font file</dd></div>

@@ -3,22 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fontroom</title>
-<meta name="description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
+<title>Fontroom: see how a font really looks before you ship it</title>
+<meta name="description" content="Pick any Google Font or your own file. See it on a real website and phone app, then copy the code for your stack. Free and open source.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Fontroom: see your font on a real website">
-<meta property="og:description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
+<meta property="og:title" content="Fontroom: see how a font really looks before you ship it">
+<meta property="og:description" content="Pick any Google Font or your own file. See it on a real website and phone app, then copy the code.">
 <meta property="og:url" content="https://fontroom.vercel.app/">
-<meta property="og:image" content="https://fontroom.vercel.app/og.png">
+<meta property="og:image" content="https://fontroom.vercel.app/og.png?v=2">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Fontroom: see how a font really looks before you ship it">
+<meta name="twitter:image" content="https://fontroom.vercel.app/og.png?v=2">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#04060a">
+<meta name="theme-color" content="#07080a">
+<link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/BricolageGrotesqueVF.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/OnestVF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Syne:wght@700&family=Instrument+Serif&family=Space+Grotesk:wght@700&family=Playfair+Display:wght@700&family=Unbounded:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/home.css">
+<script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -26,133 +32,154 @@
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
-  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
-  <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#f4f7fb"/><path d="M17.8 8.9c-3.1-.8-5.6.6-5.6 3.9V24.4M8.4 14.9h8.4" fill="none" stroke="#04060a" stroke-width="3.2"/><rect x="20.4" y="7.6" width="3" height="16.8" rx="1.5" fill="#ff5a36"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#13161b"/><path d="M14 54V30a18 18 0 0 1 36 0v24z" fill="#f2f4f7"/><path d="M24 54V31a8 8 0 0 1 16 0v23z" fill="#ff5a36"/></symbol>
 </svg>
 
-<div class="top">
-  <div class="threads" id="heroThreads" aria-hidden="true"></div>
+<div class="hero-zone">
+  <div class="rays" id="heroRays" aria-hidden="true"></div>
 
   <header class="wrap nav">
     <a class="brand" href="index.html" aria-label="Fontroom home"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fontroom</span></a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#try">Try it</a>
+      <a href="#how">How it works</a>
       <a href="#features">Features</a>
-      <a href="#code">Code</a>
-      <a class="nav-gh" href="https://github.com/appdever01/fontroom" aria-label="Fontroom on GitHub"><svg class="ic"><use href="#i-github"/></svg></a>
-      <a class="btn primary" href="app.html">Open Fontroom</a>
+      <a href="#faq">FAQ</a>
     </nav>
+    <div class="nav-end">
+      <a class="nav-gh" href="https://github.com/appdever01/fontroom" aria-label="Fontroom on GitHub"><svg class="ic"><use href="#i-github"/></svg></a>
+      <a class="btn light" href="app.html">Open Fontroom</a>
+    </div>
   </header>
 
   <section class="wrap hero">
-    <h1>See your <span class="cycle" id="cycle">font</span><br>on a real website</h1>
-    <p>Try any Google Font or your own file on a live website and phone app, then copy the code.</p>
-    <div class="actions">
-      <a class="btn primary lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a>
-      <a class="btn ghost lg" href="https://github.com/appdever01/fontroom"><svg class="ic"><use href="#i-github"/></svg>View on GitHub</a>
+    <h1 data-reveal>See how a font really looks <br>before you ship it</h1>
+    <p class="hero-sub" data-reveal>Pick any Google Font or your own file. See it on a real website and phone app, then copy the code.</p>
+    <div class="actions" data-reveal>
+      <a class="btn light lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a>
+      <a class="btn quiet lg" href="#how">See how it works</a>
     </div>
   </section>
 
-  <section class="wrap showcase" aria-label="Screenshots">
-    <div class="seg" role="tablist" aria-label="Preview style" id="shotTabs">
-      <button type="button" role="tab" id="tab-saas" aria-controls="shots" aria-selected="true" data-shot="0"><span class="l">SaaS website</span><span class="s">SaaS</span></button>
-      <button type="button" role="tab" id="tab-docs" aria-controls="shots" aria-selected="false" tabindex="-1" data-shot="1"><span class="l">Developer docs</span><span class="s">Docs</span></button>
-      <button type="button" role="tab" id="tab-mag" aria-controls="shots" aria-selected="false" tabindex="-1" data-shot="2"><span class="l">Magazine, dark</span><span class="s">Magazine</span></button>
-    </div>
-    <div class="shots" id="shots" role="tabpanel" aria-labelledby="tab-saas" tabindex="0">
-      <img class="is-on" src="img/shot-saas.webp" width="2400" height="1500" alt="Fontroom with Fraunces headings and Inter body text on a finance website and a banking app">
-      <img src="img/shot-docs.webp" width="2400" height="1500" alt="Fontroom showing a developer docs website and a webhooks app" loading="lazy">
-      <img src="img/shot-magazine.webp" width="2400" height="1500" alt="Fontroom showing a magazine website and reading app in dark mode" loading="lazy">
+  <section class="wrap showcase" aria-label="Fontroom screenshots" data-reveal>
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="seg" role="tablist" aria-label="Sample site" id="shotTabs">
+          <button type="button" role="tab" id="tab-saas" aria-controls="shots" aria-selected="true">SaaS</button>
+          <button type="button" role="tab" id="tab-docs" aria-controls="shots" aria-selected="false" tabindex="-1">Docs</button>
+          <button type="button" role="tab" id="tab-mag" aria-controls="shots" aria-selected="false" tabindex="-1">Magazine</button>
+        </div>
+        <span class="frame-url">fontroom.vercel.app/app</span>
+      </div>
+      <div class="shots" id="shots" role="tabpanel" aria-labelledby="tab-saas" tabindex="0">
+        <img class="is-on" src="img/shot-saas.webp" width="2400" height="1500" alt="Fontroom with Fraunces headings and Inter body text on a finance website and a banking app">
+        <img src="img/shot-docs.webp" width="2400" height="1500" alt="Fontroom showing a developer docs website and a webhooks app" loading="lazy">
+        <img src="img/shot-magazine.webp" width="2400" height="1500" alt="Fontroom showing a magazine website and reading app in dark mode" loading="lazy">
+      </div>
     </div>
   </section>
 </div>
 
 <main>
+  <section class="wrap problem" aria-label="Why Fontroom exists">
+    <p class="say" id="say">Font sites show you one sentence on a blank page. Your product has buttons, prices, menus and a phone screen. So you install the font, rebuild, squint, and start again. Three fonts later, you can't remember which one looked right.</p>
+    <p class="say-after" data-reveal>Fontroom skips that loop.</p>
+  </section>
+
   <section class="wrap section try" id="try" aria-labelledby="tryTitle">
-    <div class="try-pick">
-      <h2 id="tryTitle">Try a heading font</h2>
-      <p class="lede">Pick one. The page and the code below change with it.</p>
+    <div class="try-pick" data-reveal>
+      <h2 id="tryTitle">Try it right here</h2>
+      <p class="lede">Pick a heading font, then a kind of site. The code below follows your font.</p>
       <div class="fonts" id="fonts" role="radiogroup" aria-labelledby="tryTitle"></div>
     </div>
-    <div class="try-stage" id="stage" aria-hidden="true">
-      <div class="site">
-        <div class="site-bar"><i></i><i></i><i></i><span>northwind.app</span></div>
-        <div class="site-body">
-          <p class="site-h">Spend management your finance team will actually like</p>
-          <p class="site-p">Corporate cards, approvals and reimbursements in one place. Close the books in days, not weeks.</p>
-          <div class="site-ctas"><span class="site-btn">Start free trial</span><span class="site-btn alt">Book a demo</span></div>
+    <div class="try-right" data-reveal>
+      <div class="seg tpl-tabs" role="tablist" aria-label="Sample design" id="tplTabs"></div>
+      <div class="try-stage" id="stage" role="tabpanel" tabindex="-1">
+        <div class="site">
+          <div class="site-bar"><i></i><i></i><i></i><span id="tplDomain">northwind.app</span></div>
+          <div class="site-body" id="siteBody"></div>
         </div>
-      </div>
-      <div class="phone">
-        <div class="phone-screen">
-          <p class="ph-small">Good morning</p>
-          <p class="ph-name">Ada Okonkwo</p>
-          <div class="ph-card"><p class="ph-small">Available balance</p><p class="ph-amt">$48,920.15</p><p class="ph-small">+$1,140.20 this week</p></div>
-          <p class="ph-head">Recent activity</p>
-          <div class="ph-row"><b>Figma</b><span>-$45.00</span></div>
-          <div class="ph-row"><b>Acme Studio</b><span>+$4,200.00</span></div>
-        </div>
+        <div class="phone"><div class="phone-screen" id="phoneBody"></div></div>
       </div>
     </div>
   </section>
 
+  <section class="wrap section" id="how" aria-labelledby="howTitle">
+    <h2 id="howTitle" data-reveal>How it works</h2>
+    <ol class="steps">
+      <li data-reveal>
+        <span class="step-n">1</span>
+        <h3>Pick a font</h3>
+        <p>Search Google Fonts by name, or drop in your own file.</p>
+      </li>
+      <li data-reveal>
+        <span class="step-n">2</span>
+        <h3>See it in place</h3>
+        <p>It goes onto a website and a phone app. Click any text to type your own words.</p>
+      </li>
+      <li data-reveal>
+        <span class="step-n">3</span>
+        <h3>Copy the code</h3>
+        <p>HTML, Tailwind, Next.js, Flutter or Expo, with only the weights you use.</p>
+      </li>
+    </ol>
+  </section>
+
   <section class="wrap section" id="features" aria-labelledby="featTitle">
-    <h2 id="featTitle">What you can do</h2>
+    <h2 id="featTitle" data-reveal>Made for the hard part</h2>
     <div class="bento">
-      <article class="cell wide drop">
+      <article class="cell span2 cell-drop" data-reveal>
         <div class="cell-text">
-          <h3>Test your own font files</h3>
-          <p>Drop a .woff2, .woff, .ttf or .otf onto the page. It's read in your browser and never uploaded.</p>
+          <h3>Your own font files</h3>
+          <p>Drop in a .woff2, .woff, .ttf or .otf. It's read in your browser and never leaves your device.</p>
         </div>
         <div class="dropzone" aria-hidden="true">
-          <svg class="ic"><use href="#i-upload"/></svg>
-          <div class="files"><span>BrandSans-Variable.woff2</span><span>Display-Bold.otf</span></div>
+          <div class="file f1"><svg class="ic"><use href="#i-upload"/></svg>BrandSans-Variable.woff2</div>
+          <div class="file f2">Display-Bold.otf</div>
+          <span class="local"><svg class="ic"><use href="#i-lock"/></svg>Stays on this device</span>
         </div>
       </article>
-      <article class="cell weights">
+      <article class="cell cell-weights" data-reveal>
         <div class="ladder" aria-hidden="true">
-          <span style="font-weight:200">Aa<small>200</small></span><span style="font-weight:400">Aa<small>400</small></span><span style="font-weight:600">Aa<small>600</small></span><span style="font-weight:800">Aa<small>800</small></span>
+          <span style="font-weight:300">Aa<small>300</small></span><span style="font-weight:400">Aa<small>400</small></span><span style="font-weight:500">Aa<small>500</small></span><span class="fake">Aa<small>800</small></span>
         </div>
         <div class="cell-text">
-          <h3>Only real weights</h3>
-          <p>The weight menu lists what the font actually has, so you never design with one that doesn't exist.</p>
+          <h3>Only weights that exist</h3>
+          <p>The weight menu lists what the font really has, so the browser never fakes a bold.</p>
         </div>
       </article>
-      <article class="cell">
+      <article class="cell cell-link" data-reveal>
         <div class="url" aria-hidden="true"><svg class="ic"><use href="#i-link"/></svg><span>fontroom.vercel.app/app#h=Syne&amp;b=Inter&amp;w=700</span></div>
         <div class="cell-text">
           <h3>Share the exact setup</h3>
-          <p>The link holds both fonts, the weight, size, colour and theme.</p>
+          <p>One link holds both fonts, the weight, size, colour and theme.</p>
         </div>
       </article>
-      <article class="cell">
-        <div class="saved" aria-hidden="true">
-          <div><b style="font-family:'Fraunces',serif;font-weight:700">Fraunces</b><span>Inter</span><svg class="ic"><use href="#i-bookmark"/></svg></div>
-          <div><b style="font-family:'Syne',sans-serif;font-weight:700">Syne</b><span>Inter</span><svg class="ic"><use href="#i-bookmark"/></svg></div>
-        </div>
+      <article class="cell span2 cell-flip" data-reveal>
         <div class="cell-text">
-          <h3>Save pairings you like</h3>
-          <p>They stay in your browser for next time.</p>
+          <h3>Shortlist, then flip</h3>
+          <p>Save the pairings you like, then flip between them on the same page with <kbd>[</kbd> and <kbd>]</kbd>. No more tabs.</p>
         </div>
-      </article>
-      <article class="cell">
-        <div class="keys" aria-hidden="true">
-          <span><kbd>X</kbd>Swap</span><span><kbd>R</kbd>Random</span><span><kbd>S</kbd>Save</span><span><kbd>?</kbd>All keys</span>
-        </div>
-        <div class="cell-text">
-          <h3>Keyboard first</h3>
-          <p>Search, swap, shuffle and save without leaving the keys.</p>
+        <div class="flipper" aria-hidden="true">
+          <div class="flip-card c3"><b style="font-family:'Playfair Display',serif;font-weight:700">Playfair Display</b><span>with Inter</span></div>
+          <div class="flip-card c2"><b style="font-family:'Syne',sans-serif;font-weight:700">Syne</b><span>with Inter</span></div>
+          <div class="flip-card c1"><b style="font-family:'Fraunces',serif;font-weight:700">Fraunces</b><span>with Inter</span></div>
+          <div class="flip-count"><kbd>[</kbd><span>1 of 3</span><kbd>]</kbd></div>
         </div>
       </article>
     </div>
   </section>
 
   <section class="wrap section" id="code" aria-labelledby="codeTitle">
-    <h2 id="codeTitle">Copy the code for your stack</h2>
-    <p class="lede">Only the weights you use. It follows the font you picked above.</p>
-    <div class="code">
+    <div class="code-intro" data-reveal>
+      <h2 id="codeTitle">Copy the setup for your stack</h2>
+      <p class="lede">Only the weights you use. It follows the font you picked above.</p>
+    </div>
+    <div class="code" data-reveal>
       <div class="code-head">
         <div class="stacks" role="tablist" aria-label="Stack" id="stackTabs"></div>
         <button type="button" class="copy" id="copyBtn"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button>
@@ -162,15 +189,38 @@
     </div>
   </section>
 
-  <section class="oss" aria-labelledby="ossTitle">
-    <div class="threads" id="ossThreads" aria-hidden="true"></div>
-    <div class="wrap oss-inner">
-      <h2 id="ossTitle">Free and open source</h2>
-      <p>MIT licensed. Read the code, open an issue or send a pull request.</p>
-      <div class="actions">
-        <a class="btn primary lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a>
-        <a class="btn ghost lg" href="https://github.com/appdever01/fontroom"><svg class="ic"><use href="#i-github"/></svg>View on GitHub</a>
-      </div>
+  <section class="wrap section faq" id="faq" aria-labelledby="faqTitle">
+    <h2 id="faqTitle" data-reveal>Questions</h2>
+    <div class="qa" data-reveal>
+      <details open>
+        <summary>Is Fontroom free?<svg class="ic"><use href="#i-plus"/></svg></summary>
+        <p>Yes. It's free and open source under the MIT license. No account, nothing to install.</p>
+      </details>
+      <details>
+        <summary>Do my font files get uploaded?<svg class="ic"><use href="#i-plus"/></svg></summary>
+        <p>No. Your file is read in your browser and stays on your device. It isn't added to share links or saved pairings either.</p>
+      </details>
+      <details>
+        <summary>Can I use these fonts in a commercial product?<svg class="ic"><use href="#i-plus"/></svg></summary>
+        <p>Google Fonts are open source, so almost always yes. Check the license on the font's Google Fonts page to be sure. For your own files, your font license applies.</p>
+      </details>
+      <details>
+        <summary>Which stacks does the code cover?<svg class="ic"><use href="#i-plus"/></svg></summary>
+        <p>Plain HTML and CSS, Tailwind, Next.js with next/font, Flutter with google_fonts, and Expo.</p>
+      </details>
+      <details>
+        <summary>Where are saved pairings kept?<svg class="ic"><use href="#i-plus"/></svg></summary>
+        <p>In your browser. Nothing goes to a server, and clearing your browser data removes them.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="cta" aria-labelledby="ctaTitle">
+    <div class="rays" id="ctaRays" aria-hidden="true"></div>
+    <div class="wrap cta-inner">
+      <h2 id="ctaTitle" data-reveal>Stop guessing.<br>Go find your font.</h2>
+      <p data-reveal>Free, open source, no sign up.</p>
+      <div data-reveal><a class="btn light lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a></div>
     </div>
   </section>
 </main>
@@ -179,7 +229,8 @@
   <div class="wrap foot-grid">
     <div class="foot-brand">
       <a class="brand" href="index.html"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fontroom</span></a>
-      <p>See fonts where they'll actually live, then ship them.</p>
+      <p>Try fonts where they'll actually live.</p>
+      <a class="foot-gh" href="https://github.com/appdever01/fontroom" aria-label="Fontroom on GitHub"><svg class="ic"><use href="#i-github"/></svg></a>
     </div>
     <nav class="foot-col" aria-label="Product">
       <h3>Product</h3>
@@ -196,9 +247,8 @@
     <nav class="foot-col" aria-label="Credits">
       <h3>Credits</h3>
       <a href="https://fonts.google.com">Google Fonts</a>
-      <a href="https://github.com/ivodolenc/aspekta">Aspekta</a>
-      <a href="https://github.com/ateliertriay/bricolage">Bricolage Grotesque</a>
-      <a href="https://reactbits.dev">Threads by React Bits</a>
+      <a href="https://github.com/googlefonts/onest">Onest</a>
+      <a href="https://reactbits.dev">Light Rays by React Bits</a>
     </nav>
   </div>
   <div class="wrap foot-base">
@@ -209,7 +259,7 @@
 </footer>
 
 <script src="js/core.js"></script>
-<script src="js/threads.js"></script>
+<script src="js/lightrays.js"></script>
 <script src="js/home.js"></script>
 </body>
 </html>

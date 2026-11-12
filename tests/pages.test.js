@@ -102,7 +102,29 @@ test("landing page keeps phones from scrolling sideways", () => {
   const css = read("css/home.css");
   assert.match(css, /\.try\{grid-template-columns:minmax\(0,1fr\)/);
   assert.match(css, /\.try-pick\{min-width:0\}/);
+  assert.match(css, /\.cell,\.cell\.span2\{grid-column:auto/);
   const html = read("index.html");
-  for (const label of ["SaaS", "Docs", "Magazine"]) assert.ok(html.includes(`<span class="s">${label}</span>`));
   assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1">/);
+});
+
+test("landing page story: problem, steps, questions and one call to action", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, $$ } = p;
+  const words = $$("#say .w");
+  assert.ok(words.length > 30);
+  assert.equal(words.map(w => w.textContent).join(" "), $("#say").textContent);
+  assert.equal($$(".steps li").length, 3);
+  assert.equal($$(".bento .cell").length, 4);
+  const qa = $$(".qa details");
+  assert.equal(qa.length, 5);
+  assert.ok(qa[0].open);
+  assert.ok(qa.slice(1).every(d => !d.open));
+  const opens = $$("a").filter(a => a.getAttribute("href") === "app.html").map(a => a.textContent.trim());
+  assert.ok(opens.length >= 3);
+  assert.ok(opens.slice(0, -1).every(t => t === "Open Fontroom"), "one label for the open intent");
+  assert.equal($$("[data-reveal]").length, $$("[data-reveal]").filter(el => el.classList.contains("in")).length + $$("[data-reveal]:not(.in)").length);
+  assert.ok(!/—|–/.test($("main").textContent + $("footer").textContent + $(".hero-zone").textContent), "no em or en dashes in copy");
+  assert.deepEqual(p.errors, []);
+  p.w.close();
 });

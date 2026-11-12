@@ -70,7 +70,7 @@ test("Google Fonts code covers every platform", () => {
 });
 
 test("font files: variable woff2 is detected", () => {
-  const m = X.parseFontFile(buf(path.join(PUBLIC, "fonts/AspektaVF.woff2")));
+  const m = X.parseFontFile(buf(path.join(PUBLIC, "fonts/OnestVF.woff2")));
   assert.deepEqual(m, { format: "woff2", variable: true, weight: null });
 });
 

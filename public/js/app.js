@@ -26,9 +26,11 @@
   const canonical = n => (BY_NAME.get(n.toLowerCase()) || {}).name || n;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  function toast(msg, kind) {
+  function toast(msg, kind, key) {
+    if (key) document.querySelectorAll("#toasts .toast").forEach(t => { if (t.dataset.key === key) t.remove(); });
     const el = document.createElement("div");
     el.className = "toast" + (kind === "err" ? " err" : "");
+    if (key) el.dataset.key = key;
     el.textContent = msg;
     $("#toasts").append(el);
     setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 220); }, kind === "err" ? 4600 : 2600);
@@ -536,7 +538,8 @@
       el.innerHTML = `<p class="empty">Nothing saved yet. Press the bookmark next to “Try a pairing” to keep the current pair here. Saved pairings stay in this browser.</p>`;
       return;
     }
-    el.innerHTML = saved.map((x, k) => `<div class="saved-row${k === i ? " current" : ""}"><button type="button" class="saved-apply" data-i="${k}" aria-label="Use ${esc(x.h)} ${x.w} with ${esc(x.b)}"><span class="saved-h" style="font-family:'pv ${esc(x.h)}','${esc(x.h)}',var(--ui)">${esc(x.h)}</span><span class="saved-b"><span style="font-family:'pv ${esc(x.b)}','${esc(x.b)}',var(--ui)">${esc(x.b)}</span> <small>· heading ${x.w}</small></span></button><button type="button" class="icon-btn saved-del" data-i="${k}" aria-label="Remove ${esc(x.h)} with ${esc(x.b)}"><svg class="ic sm"><use href="#i-x"/></svg></button></div>`).join("");
+    const flip = saved.length > 1 ? `<div class="flip"><button type="button" class="icon-btn flip-btn" data-d="-1" aria-label="Previous saved pairing"><svg class="ic sm"><use href="#i-back"/></svg></button><span>Flip through these on the preview <kbd>[</kbd> <kbd>]</kbd></span><button type="button" class="icon-btn flip-btn" data-d="1" aria-label="Next saved pairing"><svg class="ic sm"><use href="#i-next"/></svg></button></div>` : "";
+    el.innerHTML = flip + saved.map((x, k) => `<div class="saved-row${k === i ? " current" : ""}"><button type="button" class="saved-apply" data-i="${k}" aria-label="Use ${esc(x.h)} ${x.w} with ${esc(x.b)}"><span class="saved-h" style="font-family:'pv ${esc(x.h)}','${esc(x.h)}',var(--ui)">${esc(x.h)}</span><span class="saved-b"><span style="font-family:'pv ${esc(x.b)}','${esc(x.b)}',var(--ui)">${esc(x.b)}</span> <small>· heading ${x.w}</small></span></button><button type="button" class="icon-btn saved-del" data-i="${k}" aria-label="Remove ${esc(x.h)} with ${esc(x.b)}"><svg class="ic sm"><use href="#i-x"/></svg></button></div>`).join("");
     saved.forEach(x => { loadPreview(x.h); loadPreview(x.b); });
   }
   function toggleSave() {
@@ -553,7 +556,7 @@
     saved = saved.slice(0, 40);
     const ok = storeSaved();
     renderSaved();
-    toast(ok ? `Saved ${state.heading} with ${state.body}.` : "Saved for this visit only. Your browser blocked storage, so it won't be here after a reload.", ok ? "" : "err");
+    toast(ok ? `Saved ${state.heading} with ${state.body}.${saved.length === 2 ? " Press [ and ] to flip between your saved pairings." : ""}` :"Saved for this visit only. Your browser blocked storage, so it won't be here after a reload.", ok ? "" : "err");
   }
   $("#saveBtn").addEventListener("click", toggleSave);
   $("#savedList").addEventListener("click", e => {
@@ -565,16 +568,30 @@
       next.focus();
       return;
     }
+    const fb = e.target.closest(".flip-btn");
+    if (fb) { flipSaved(+fb.dataset.d); return; }
     const ap = e.target.closest(".saved-apply");
-    if (!ap) return;
-    const x = saved[+ap.dataset.i];
+    if (ap) applySaved(+ap.dataset.i);
+  });
+  function flipSaved(d) {
+    if (saved.length < 2) {
+      toast(saved.length ? "Save one more pairing, then flip between them with [ and ]." : "Save a few pairings with S, then flip between them with [ and ].", "", "flip");
+      return;
+    }
+    const i = savedIndex();
+    const k = i < 0 ? (d > 0 ? 0 : saved.length - 1) : (i + d + saved.length) % saved.length;
+    applySaved(k);
+    toast(`${k + 1} of ${saved.length}: ${saved[k].h} with ${saved[k].b}`, "", "flip");
+  }
+  function applySaved(k) {
+    const x = saved[k];
     preview = null;
     state.heading = canonical(x.h); state.body = canonical(x.b);
     if (ALL_WEIGHTS.includes(+x.w)) state.weight = +x.w;
     [x.h, x.b].forEach(n => { if (!BY_NAME.has(n.toLowerCase())) custom.set(n, { name: n, cat: "custom" }); });
     loadFont(state.heading); loadFont(state.body);
     refreshAll();
-  });
+  }
 
   const sideTabs = [$("#tab-fonts"), $("#tab-saved")];
   function showSideTab(which, focus) {
@@ -677,6 +694,8 @@
       x: swapFonts,
       r: shufflePair,
       s: toggleSave,
+      "[": () => flipSaved(-1),
+      "]": () => flipSaved(1),
       d: () => $("#themeBtn").click(),
       c: () => $("#codeBtn").click(),
       u: () => $("#fontFile").click(),

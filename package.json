@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "npx --yes serve@14 public -l 4815",
     "test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
-    "check": "node --check public/js/core.js && node --check public/js/templates.js && node --check public/js/app.js && node --check public/js/home.js && node --check public/js/threads.js"
+    "check": "node --check public/js/core.js && node --check public/js/templates.js && node --check public/js/app.js && node --check public/js/home.js && node --check public/js/lightrays.js"
   },
   "devDependencies": {
     "jsdom": "^31.0.0"

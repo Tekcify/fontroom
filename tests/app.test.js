@@ -117,6 +117,37 @@ test("saved pairings persist and re-apply", async () => {
   assert.equal($("#savedCount").textContent, "");
 });
 
+test("flip through saved pairings on the preview", async () => {
+  const list = [{ h: "Syne", b: "Manrope", w: 800 }, { h: "Lora", b: "Karla", w: 700 }, { h: "Anton", b: "Rubik", w: 400 }];
+  const p = openPage("app.html", { storage: { "fontroom:saved": JSON.stringify(list) } });
+  await p.tick(200);
+  const { $, $$, key, d } = p;
+  const heading = () => $(".slot[data-slot=heading] .slot-name").textContent;
+  key(d.body, "]"); await p.tick();
+  assert.equal(heading(), "Syne");
+  assert.match($("#toasts").textContent, /1 of 3: Syne with Manrope/);
+  key(d.body, "]"); await p.tick();
+  assert.equal(heading(), "Lora");
+  assert.equal($$("#toasts .toast").length, 1, "flip toasts replace each other");
+  key(d.body, "["); key(d.body, "["); await p.tick();
+  assert.equal(heading(), "Anton");
+  assert.match(p.w.location.hash, /w=400/);
+  $("#tab-saved").click();
+  $$(".flip-btn")[1].click(); await p.tick();
+  assert.equal(heading(), "Syne");
+  assert.ok($$(".saved-row")[0].classList.contains("current"));
+  assert.deepEqual(p.errors, []);
+});
+
+test("flipping explains itself when fewer than two are saved", async () => {
+  const p = openPage("app.html");
+  await p.tick(200);
+  p.key(p.d.body, "]");
+  assert.match(p.$("#toasts").textContent, /Save a few pairings/);
+  assert.equal(p.$(".slot[data-slot=heading] .slot-name").textContent, "Fraunces");
+  assert.equal(p.$$(".flip").length, 0);
+});
+
 test("keyboard shortcuts", async () => {
   const p = openPage("app.html");
   await p.tick(200);
@@ -143,7 +174,7 @@ test("own font file: drop, preview, code and limits", async () => {
   const p = openPage("app.html");
   await p.tick(200);
   const { $, $$, w } = p;
-  const b = fs.readFileSync(path.join(PUBLIC, "fonts/AspektaVF.woff2"));
+  const b = fs.readFileSync(path.join(PUBLIC, "fonts/OnestVF.woff2"));
   const drop = file => {
     const ev = new w.Event("drop", { bubbles: true, cancelable: true });
     Object.defineProperty(ev, "dataTransfer", { value: { types: ["Files"], files: [file] } });
@@ -153,18 +184,18 @@ test("own font file: drop, preview, code and limits", async () => {
   await p.tick();
   assert.match($("#toasts").textContent, /isn't a font file/);
 
-  drop({ name: "AspektaVF.woff2", size: b.length, arrayBuffer: async () => b.buffer.slice(b.byteOffset, b.byteOffset + b.length) });
+  drop({ name: "RidgelineVF.woff2", size: b.length, arrayBuffer: async () => b.buffer.slice(b.byteOffset, b.byteOffset + b.length) });
   await p.tick(200);
-  assert.equal($(".slot[data-slot=heading] .slot-name").textContent, "Aspekta");
+  assert.equal($(".slot[data-slot=heading] .slot-name").textContent, "Ridgeline");
   assert.equal($(".slot[data-slot=heading] .slot-meta").textContent, "Your file · 9 weights");
-  assert.match($("#stage").style.getPropertyValue("--fh"), /"Aspekta"/);
+  assert.match($("#stage").style.getPropertyValue("--fh"), /"Ridgeline"/);
   assert.match($("#toasts").textContent, /stays on this device/);
-  assert.ok(!/h=Aspekta/.test(w.location.hash), "own fonts never go into the link");
-  assert.ok($$("#fontList .opt").some(o => o.dataset.name === "Aspekta"));
+  assert.ok(!/h=Ridgeline/.test(w.location.hash), "own fonts never go into the link");
+  assert.ok($$("#fontList .opt").some(o => o.dataset.name === "Ridgeline"));
 
   $("#codeBtn").click();
   assert.deepEqual($$("#tabs [role=tab]").map(t => t.dataset.v), ["css", "next"]);
-  assert.match($("#codeBody").textContent, /url\("\/fonts\/AspektaVF\.woff2"\)/);
+  assert.match($("#codeBody").textContent, /url\("\/fonts\/RidgelineVF\.woff2"\)/);
   $("#tab-next").click();
   assert.match($("#codeBody").textContent, /next\/font\/local/);
   $("#drawerClose").click();
