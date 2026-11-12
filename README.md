@@ -8,7 +8,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 
 **Live:** [fontroom.vercel.app](https://fontroom.vercel.app)
 
-![Fontroom showing Fraunces and Inter on a SaaS website and a banking app](docs/app.png)
+![Fontroom showing Fraunces and Inter on a SaaS website and a banking app](docs/app.jpg)
 
 ## Features
 
@@ -28,7 +28,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 
 | Developer docs template | Magazine template, dark preview |
 | --- | --- |
-| ![Docs template with Bricolage Grotesque](docs/app-docs.png) | ![Magazine template in dark mode with Instrument Serif](docs/app-dark.png) |
+| ![Docs template with Bricolage Grotesque](docs/app-docs.jpg) | ![Magazine template in dark mode with Instrument Serif](docs/app-dark.jpg) |
 
 ## Keyboard shortcuts
 
