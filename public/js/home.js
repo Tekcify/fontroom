@@ -37,9 +37,8 @@
     };
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem(KEY)); } catch {}
-    const fresh = saved && Number.isInteger(saved.n) && Date.now() - saved.t < 36e5;
     if (saved && Number.isInteger(saved.n)) show(saved.n);
-    if (!fresh) (async () => {
+    (async () => {
       try {
         const res = await fetch("https://api.github.com/repos/Tekcify/fontroom", { headers: { Accept: "application/vnd.github+json" } });
         if (!res.ok) return;

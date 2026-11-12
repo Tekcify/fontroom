@@ -47,7 +47,7 @@ kbd{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 
 .gh-star-main,.gh-star-count{display:inline-flex;align-items:center;gap:8px}
 .gh-star-main{padding:0 14px 0 13px}
 .gh-star-main .ic{width:18px;height:18px}
-.gh-star-count{gap:6px;padding:0 15px 0 12px;border-left:1px solid rgba(255,255,255,.09);color:var(--t2);font-variant-numeric:tabular-nums}
+.gh-star-count{gap:6px;padding:0 15px 0 12px;border-left:1px solid rgba(255,255,255,.09);color:var(--t1);font-weight:700;font-variant-numeric:tabular-nums}
 .gh-star-count[hidden]{display:none}
 .gh-star-count .ic{width:15px;height:15px;color:var(--t3);transition:color .2s,fill .2s,transform .35s var(--ease)}
 .gh-star:hover .gh-star-count .ic{color:var(--red);fill:var(--red);transform:scale(1.15) rotate(-8deg)}

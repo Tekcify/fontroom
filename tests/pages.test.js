@@ -345,7 +345,7 @@ test("landing page scrolls smoothly with a mouse or trackpad and natively otherw
   assert.match(read("css/home.css"), /html\.lenis\{scroll-behavior:auto\}/);
 });
 
-test("nav star button shows the real GitHub star count and caches it", async () => {
+test("nav star button shows the real GitHub star count and refreshes it on every visit", async () => {
   const live = openPage("index.html", { stars: 2 });
   await live.tick(50);
   const star = live.$("#ghStar");
@@ -360,10 +360,19 @@ test("nav star button shows the real GitHub star count and caches it", async () 
 
   const log = [];
   const cached = openPage("index.html", { fetchLog: log, stars: 9, storage: { "fontroom.stars": JSON.stringify({ n: 1234, t: Date.now() }) } });
+  assert.equal(cached.$("#ghStarsN").textContent, "1.2k", "the saved count shows straight away");
   await cached.tick(50);
-  assert.equal(cached.$("#ghStarsN").textContent, "1.2k");
-  assert.ok(!log.some(u => u.includes("api.github.com")), "a fresh cached count skips the request");
+  assert.ok(log.some(u => u.includes("api.github.com")), "a saved count is still checked against GitHub");
+  assert.equal(cached.$("#ghStarsN").textContent, "9");
+  assert.equal(JSON.parse(cached.w.localStorage.getItem("fontroom.stars")).n, 9);
   cached.w.close();
+
+  const offline = openPage("index.html", { storage: { "fontroom.stars": JSON.stringify({ n: 6, t: Date.now() - 864e5 }) } });
+  await offline.tick(50);
+  assert.equal(offline.$("#ghStarsN").textContent, "6", "a failed request keeps the last real count");
+  offline.w.close();
+
+  assert.match(read("css/home.css"), /\.gh-star-count\{[^}]*font-weight:700/);
 
   const big = openPage("index.html", { stars: 15400 });
   await big.tick(50);
