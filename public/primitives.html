@@ -44,7 +44,7 @@ input{font:inherit;color:inherit}
 .layout{display:grid;grid-template-columns:232px minmax(0,1fr);max-width:1240px;margin:0 auto}
 .toc{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 16px 28px 24px}
 .toc a.toc-brand{display:flex;padding:0;background:none;color:var(--t1);align-items:center;gap:10px;font-weight:650;font-size:15px;margin-bottom:28px;color:inherit;text-decoration:none}
-.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--t1);color:var(--bg);display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.brand-mark{width:28px;height:28px;flex:none}
 .toc h2{font-size:12px;font-weight:500;color:var(--t4);margin:20px 0 6px 8px}
 .toc a{display:block;padding:5px 8px;border-radius:7px;color:var(--t3);font-size:13.5px;text-decoration:none;transition:background .15s,color .15s}
 .toc a:hover{color:var(--t1);background:var(--s1)}
@@ -247,7 +247,7 @@ kbd{font:500 11px/1 var(--mono);color:var(--t3);background:var(--s3);border-radi
 
 <div class="layout">
   <nav class="toc" aria-label="Primitives">
-    <a class="toc-brand" href="index.html"><span class="brand-mark" aria-hidden="true">Aa</span>Fontroom</a>
+    <a class="toc-brand" href="index.html"><svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#f4f7fb"/><path d="M17.8 8.9c-3.1-.8-5.6.6-5.6 3.9V24.4M8.4 14.9h8.4" fill="none" stroke="#04060a" stroke-width="3.2"/><rect x="20.4" y="7.6" width="3" height="16.8" rx="1.5" fill="#ff5a36"/></svg>Fontroom</a>
     <h2>Foundations</h2>
     <a href="#colour">Colour</a><a href="#type">Type</a><a href="#space">Spacing</a><a href="#radius">Radius</a><a href="#icons">Icons</a>
     <h2>Components</h2>

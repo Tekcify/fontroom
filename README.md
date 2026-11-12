@@ -1,3 +1,5 @@
+<img src="public/logo.svg" width="56" height="56" alt="">
+
 # Fontroom
 
 See your font on a real website and mobile app before you write any code.
@@ -75,10 +77,14 @@ public/
   slop.html         The "before" version, see below
   slop-app.html
   css/app.css       Tool styles, including the preview templates
+  css/home.css      Landing page styles
   js/core.js        Font catalogue, weight helpers, font file parsing, code output
   js/templates.js   Website and app templates
   js/app.js         UI and state
-  fonts/            Aspekta, the interface font
+  js/home.js        Landing page: font picker, live code, screenshot tabs
+  js/threads.js     Animated background, ported from React Bits
+  img/              Landing page screenshots
+  fonts/            Aspekta and Bricolage Grotesque
 tests/              Node tests
 docs/               README images
 ```
@@ -103,7 +109,9 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 - Fonts in the preview are served by [Google Fonts](https://fonts.google.com).
 - The interface is set in [Aspekta](https://github.com/ivodolenc/aspekta) by Ivo Dolenc, under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL.txt`.
+- Landing page headings are set in [Bricolage Grotesque](https://github.com/ateliertriay/bricolage) by Mathieu Triay, under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL-Bricolage.txt`.
+- The landing page background is a plain JavaScript port of [Threads](https://reactbits.dev) from React Bits by David Haz. It keeps its own license (MIT with the Commons Clause), in `public/js/threads.LICENSE.md`, and is not covered by Fontroom's MIT license.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE), except `public/js/threads.js` and the bundled fonts, which keep their own licenses listed above.

@@ -36,6 +36,7 @@ function openPage(rel, { hash = "", fetchLog = [], storage } = {}) {
       w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
       w.ResizeObserver = class { observe() {} disconnect() {} };
       w.Element.prototype.scrollIntoView = function () {};
+      w.HTMLCanvasElement.prototype.getContext = () => null;
       w.fetch = fakeGoogleFetch(fetchLog);
       w.navigator.clipboard = { writeText: async () => {} };
       w.FontFace = class { constructor(family, data, desc) { this.family = family; this.desc = desc; } load() { return Promise.resolve(this); } };

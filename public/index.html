@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fontroom</title>
+<meta name="description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Fontroom: see your font on a real website">
 <meta property="og:description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
@@ -11,249 +12,204 @@
 <meta property="og:image" content="https://fontroom.vercel.app/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#04060a">
-<meta name="description" content="See any Google Font on a real website and mobile app before you write any code.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/BricolageGrotesqueVF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Space+Grotesk:wght@700&family=Instrument+Serif&family=Bricolage+Grotesque:wght@700&family=Playfair+Display:wght@700&family=Syne:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="preload" href="fonts/AspektaVF.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<style>
-@font-face{font-family:"Aspekta";src:url(fonts/AspektaVF.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
-:root{
-  --bg:#04060a;--panel:#0b0f15;--s1:#121721;--s2:#181e29;--s3:#202735;--line:#222936;
-  --t1:#f4f7fb;--t2:#cdd5e1;--t3:#a0aabb;--t4:#7f8a9d;
-  --ui:"Aspekta",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
-  --ease:cubic-bezier(.16,1,.3,1);
-  --acc:#3b5bdb;
-  color-scheme:dark;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:24px}
-body{margin:0;background:var(--bg);color:var(--t1);font:16px/1.55 var(--ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"ss01","cv11";overflow-x:clip}
-::selection{background:rgba(255,255,255,.22)}
-:focus-visible{outline:2px solid rgba(244,247,251,.6);outline-offset:3px;border-radius:8px}
-a{color:inherit}
-h1,h2,h3,p{margin:0}
-.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-.ic{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
-
-.nav{display:flex;align-items:center;justify-content:space-between;height:72px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:17px;letter-spacing:-.01em;text-decoration:none}
-.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--t1);color:var(--bg);display:grid;place-items:center;font-size:14px;font-weight:700;letter-spacing:-.02em}
-.nav-links{display:flex;align-items:center;gap:24px;font-size:14.5px}
-.nav-links a:not(.btn){color:var(--t3);text-decoration:none;transition:color .15s}
-.nav-links a:not(.btn):hover{color:var(--t1)}
-
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;background:var(--s1);color:var(--t1);font-size:14.5px;font-weight:550;text-decoration:none;white-space:nowrap;transition:background .15s,transform .15s var(--ease)}
-.btn:hover{background:var(--s2)}
-.btn.primary{background:var(--t1);color:var(--bg);font-weight:600}
-.btn.primary:hover{background:#fff}
-.btn:active{transform:scale(.98)}
-.btn.lg{height:48px;padding:0 22px;font-size:15.5px;border-radius:12px}
-
-.hero{padding-top:88px;padding-bottom:56px;display:grid;justify-items:start}
-.hero h1{font-size:clamp(40px,6.2vw,74px);line-height:1.04;font-weight:650;letter-spacing:-.035em;max-width:13.5em;text-wrap:balance}
-.hero p{font-size:clamp(17px,1.6vw,19px);color:var(--t3);max-width:33em;margin-top:22px}
-.hero .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
-
-.demo{background:var(--panel);border-radius:22px;padding:22px;display:grid;gap:20px}
-.demo-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.demo-top h2{font-size:15px;font-weight:600;color:var(--t2)}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{height:34px;padding:0 13px;border-radius:99px;border:0;background:var(--s1);color:var(--t3);font-size:16px;cursor:pointer;transition:background .15s,color .15s}
-.chip:hover{color:var(--t1);background:var(--s2)}
-.chip[aria-checked=true]{background:var(--t1);color:var(--bg)}
-.demo-stage{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
-.mini-browser{background:var(--s1);border-radius:14px;overflow:hidden}
-.mini-bar{display:flex;align-items:center;gap:6px;height:34px;padding:0 12px}
-.mini-bar i{width:9px;height:9px;border-radius:50%;background:var(--s3)}
-.mini-url{margin:0 auto;font-size:11.5px;color:var(--t4)}
-.mini-site{background:#fff;color:#15171c;padding:40px 36px 44px;font-family:"Inter",system-ui,sans-serif}
-.mini-site .h{color:#15171c;margin:0;font-family:var(--fh);font-weight:var(--hw);font-size:clamp(30px,4.2vw,50px);line-height:1.08;letter-spacing:-.01em;text-wrap:balance;max-width:12em;transition:opacity .2s}
-.mini-site p{color:#5a616e;font-size:16px;margin-top:16px;max-width:30em}
-.mini-site .cta{display:inline-flex;margin-top:24px;height:42px;align-items:center;padding:0 18px;border-radius:10px;background:var(--acc);color:#fff;font-weight:600;font-size:14.5px}
-.mini-phone{background:#1c222d;border-radius:40px;padding:8px;box-shadow:inset 0 0 0 1px #2a3240}
-.mini-screen{background:#fff;color:#15171c;border-radius:33px;padding:46px 18px 24px;font-family:"Inter",system-ui,sans-serif;min-height:400px;position:relative}
-.mini-screen::before{content:"";position:absolute;top:10px;left:50%;width:96px;height:28px;margin-left:-48px;border-radius:16px;background:#000}
-.mini-screen .small{font-size:13px;color:#5a616e}
-.mini-screen .name{font-family:var(--fh);font-weight:var(--hw);font-size:22px;margin:2px 0 16px}
-.mini-card{background:var(--acc);color:#fff;border-radius:18px;padding:16px}
-.mini-card .amt{font-family:var(--fh);font-weight:var(--hw);font-size:32px;line-height:1.1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
-.mini-card .small{color:rgba(255,255,255,.82)}
-.mini-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #ececea;font-size:14.5px}
-.mini-row b{font-weight:600}
-.mini-head{font-family:var(--fh);font-weight:var(--hw);font-size:18px;margin:22px 0 4px}
-.demo-note{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;color:var(--t3);font-size:14.5px}
-.demo-note a{color:var(--t1);font-weight:550;text-underline-offset:3px}
-
-.section{padding-top:104px}
-.section h2{font-size:clamp(28px,3.4vw,40px);line-height:1.12;font-weight:650;letter-spacing:-.025em;text-wrap:balance}
-.section .lede{color:var(--t3);font-size:17px;max-width:34em;margin-top:14px}
-.steps{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-.steps li{border-top:1px solid var(--line);padding-top:20px}
-.steps .n{font-size:13px;color:var(--t4);font-variant-numeric:tabular-nums}
-.steps h3{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:10px 0 8px}
-.steps p{color:var(--t3);font-size:15.5px}
-
-.stack{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
-.stack ul{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-wrap:wrap;gap:6px}
-.stack li{padding:6px 12px;border-radius:99px;background:var(--s1);color:var(--t2);font-size:14px}
-.code{background:var(--panel);border-radius:16px;overflow:hidden}
-.code-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:13px;color:var(--t3)}
-.code pre{margin:0;padding:0 16px 18px;font:13px/1.7 var(--mono);color:var(--t2);white-space:pre-wrap;overflow-wrap:anywhere}
-
-.end{padding-top:120px;padding-bottom:96px;display:grid;justify-items:start;gap:26px}
-.end h2{font-size:clamp(32px,4.6vw,56px);line-height:1.06;font-weight:650;letter-spacing:-.03em;max-width:12em;text-wrap:balance}
-footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--t4);font-size:13.5px}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
-
-@media (max-width:860px){
-  .demo-stage,.stack{grid-template-columns:1fr}
-  .mini-phone{max-width:320px;justify-self:center;width:100%}
-  .steps{grid-template-columns:1fr;gap:24px}
-  .hero{padding-top:56px;padding-bottom:40px}
-  .section{padding-top:80px}
-}
-@media (max-width:520px){
-  .nav-links a:not(.btn){display:none}
-  .demo{padding:14px;border-radius:18px}
-  .mini-site{padding:28px 22px 32px}
-}
-@media (prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{transition:none!important;animation:none!important}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Syne:wght@700&family=Instrument+Serif&family=Space+Grotesk:wght@700&family=Playfair+Display:wght@700&family=Unbounded:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/home.css">
 </head>
 <body>
-<header class="wrap nav">
-  <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">Aa</span>Fontroom</a>
-  <nav class="nav-links" aria-label="Main">
-    <a href="#how">How it works</a>
-    <a href="#code">Code</a>
-    <a class="btn primary" href="app.html">Get started</a>
-  </nav>
-</header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" stroke="none" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="logo" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#f4f7fb"/><path d="M17.8 8.9c-3.1-.8-5.6.6-5.6 3.9V24.4M8.4 14.9h8.4" fill="none" stroke="#04060a" stroke-width="3.2"/><rect x="20.4" y="7.6" width="3" height="16.8" rx="1.5" fill="#ff5a36"/></symbol>
+</svg>
+
+<div class="top">
+  <div class="threads" id="heroThreads" aria-hidden="true"></div>
+
+  <header class="wrap nav">
+    <a class="brand" href="index.html" aria-label="Fontroom home"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fontroom</span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#try">Try it</a>
+      <a href="#features">Features</a>
+      <a href="#code">Code</a>
+      <a class="nav-gh" href="https://github.com/appdever01/fontroom" aria-label="Fontroom on GitHub"><svg class="ic"><use href="#i-github"/></svg></a>
+      <a class="btn primary" href="app.html">Open Fontroom</a>
+    </nav>
+  </header>
+
+  <section class="wrap hero">
+    <h1>See your <span class="cycle" id="cycle">font</span><br>on a real website</h1>
+    <p>Try any Google Font or your own file on a live website and phone app, then copy the code.</p>
+    <div class="actions">
+      <a class="btn primary lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a>
+      <a class="btn ghost lg" href="https://github.com/appdever01/fontroom"><svg class="ic"><use href="#i-github"/></svg>View on GitHub</a>
+    </div>
+  </section>
+
+  <section class="wrap showcase" aria-label="Screenshots">
+    <div class="seg" role="tablist" aria-label="Preview style" id="shotTabs">
+      <button type="button" role="tab" id="tab-saas" aria-controls="shots" aria-selected="true" data-shot="0">SaaS website</button>
+      <button type="button" role="tab" id="tab-docs" aria-controls="shots" aria-selected="false" tabindex="-1" data-shot="1">Developer docs</button>
+      <button type="button" role="tab" id="tab-mag" aria-controls="shots" aria-selected="false" tabindex="-1" data-shot="2">Magazine, dark</button>
+    </div>
+    <div class="shots" id="shots" role="tabpanel" aria-labelledby="tab-saas">
+      <img class="is-on" src="img/shot-saas.webp" width="2400" height="1500" alt="Fontroom with Fraunces headings and Inter body text on a finance website and a banking app">
+      <img src="img/shot-docs.webp" width="2400" height="1500" alt="Fontroom showing a developer docs website and a webhooks app" loading="lazy">
+      <img src="img/shot-magazine.webp" width="2400" height="1500" alt="Fontroom showing a magazine website and reading app in dark mode" loading="lazy">
+    </div>
+  </section>
+</div>
 
 <main>
-  <section class="wrap hero">
-    <h1>See your font on a real website before you write any code</h1>
-    <p>Search any Google Font, or drop in your own font file, and watch it on a live website and mobile app. Keep the pairing you like, then copy the code for your stack.</p>
-    <div class="actions">
-      <a class="btn primary lg" href="app.html">Get started</a>
-      <a class="btn lg" href="#how">How it works</a>
+  <section class="wrap section try" id="try" aria-labelledby="tryTitle">
+    <div class="try-pick">
+      <h2 id="tryTitle">Try a heading font</h2>
+      <p class="lede">Pick one. The page and the code below change with it.</p>
+      <div class="fonts" id="fonts" role="radiogroup" aria-labelledby="tryTitle"></div>
     </div>
-  </section>
-
-  <section class="wrap" aria-labelledby="demoTitle">
-    <div class="demo">
-      <div class="demo-top">
-        <h2 id="demoTitle">Pick a heading font</h2>
-        <div class="chips" id="chips" role="radiogroup" aria-labelledby="demoTitle"></div>
-      </div>
-      <div class="demo-stage" id="demoStage">
-        <div class="mini-browser" aria-hidden="true">
-          <div class="mini-bar"><i></i><i></i><i></i><span class="mini-url">northwind.app</span></div>
-          <div class="mini-site">
-            <p class="h">Spend management your finance team will actually like</p>
-            <p>Corporate cards, approvals and reimbursements in one place. Close the books in days, not weeks.</p>
-            <span class="cta">Start free trial</span>
-          </div>
-        </div>
-        <div class="mini-phone" aria-hidden="true">
-          <div class="mini-screen">
-            <p class="small">Good morning</p>
-            <p class="name">Ada Okonkwo</p>
-            <div class="mini-card"><p class="small">Available balance</p><p class="amt">$48,920.15</p><p class="small">+$1,140.20 this week</p></div>
-            <p class="mini-head">Recent activity</p>
-            <div class="mini-row"><b>Figma</b><span>−$45.00</span></div>
-            <div class="mini-row"><b>Acme Studio</b><span>+$4,200.00</span></div>
-          </div>
+    <div class="try-stage" id="stage" aria-hidden="true">
+      <div class="site">
+        <div class="site-bar"><i></i><i></i><i></i><span>northwind.app</span></div>
+        <div class="site-body">
+          <p class="site-h">Spend management your finance team will actually like</p>
+          <p class="site-p">Corporate cards, approvals and reimbursements in one place. Close the books in days, not weeks.</p>
+          <div class="site-ctas"><span class="site-btn">Start free trial</span><span class="site-btn alt">Book a demo</span></div>
         </div>
       </div>
-      <div class="demo-note"><span>A sample with six fonts. The full tool has 180, three demo brands, dark mode and your own copy.</span><a href="app.html">Open the full tool</a></div>
-    </div>
-  </section>
-
-  <section class="wrap section" id="how">
-    <h2>How it works</h2>
-    <p class="lede">Google Fonts shows a sample sentence. Fontroom shows the font where it will actually live.</p>
-    <ol class="steps">
-      <li><span class="n">1</span><h3>Search any Google Font</h3><p>Filter by style, type the exact name of any family, or drop in your own font file. It never leaves your device.</p></li>
-      <li><span class="n">2</span><h3>Try it on a real page</h3><p>Hover a font to see it on a website and a phone app at actual size. Click to keep it.</p></li>
-      <li><span class="n">3</span><h3>Copy the code</h3><p>Get the setup for your stack with only the weights you picked.</p></li>
-    </ol>
-  </section>
-
-  <section class="wrap section" id="code">
-    <div class="stack">
-      <div>
-        <h2>Code for the stack you use</h2>
-        <p class="lede">Fontroom writes the font setup for you, so the font you saw is the font you ship.</p>
-        <ul aria-label="Supported stacks"><li>HTML and CSS</li><li>Tailwind</li><li>Next.js</li><li>Flutter</li><li>Expo</li></ul>
-      </div>
-      <div class="code">
-        <div class="code-head"><span>app/layout.tsx</span><span>Next.js</span></div>
-<pre><code>import { Fraunces, Inter } from "next/font/google";
-
-const heading = Fraunces({
-  subsets: ["latin"],
-  weight: ["700"],
-  variable: "--font-heading",
-});
-
-const body = Inter({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-body",
-});</code></pre>
+      <div class="phone">
+        <div class="phone-screen">
+          <p class="ph-small">Good morning</p>
+          <p class="ph-name">Ada Okonkwo</p>
+          <div class="ph-card"><p class="ph-small">Available balance</p><p class="ph-amt">$48,920.15</p><p class="ph-small">+$1,140.20 this week</p></div>
+          <p class="ph-head">Recent activity</p>
+          <div class="ph-row"><b>Figma</b><span>-$45.00</span></div>
+          <div class="ph-row"><b>Acme Studio</b><span>+$4,200.00</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="wrap end">
-    <h2>Find the right font for your next project</h2>
-    <a class="btn primary lg" href="app.html">Get started</a>
+  <section class="wrap section" id="features" aria-labelledby="featTitle">
+    <h2 id="featTitle">What you can do</h2>
+    <div class="bento">
+      <article class="cell wide drop">
+        <div class="cell-text">
+          <h3>Test your own font files</h3>
+          <p>Drop a .woff2, .woff, .ttf or .otf onto the page. It's read in your browser and never uploaded.</p>
+        </div>
+        <div class="dropzone" aria-hidden="true">
+          <svg class="ic"><use href="#i-upload"/></svg>
+          <div class="files"><span>BrandSans-Variable.woff2</span><span>Display-Bold.otf</span></div>
+        </div>
+      </article>
+      <article class="cell weights">
+        <div class="ladder" aria-hidden="true">
+          <span style="font-weight:200">Aa<small>200</small></span><span style="font-weight:400">Aa<small>400</small></span><span style="font-weight:600">Aa<small>600</small></span><span style="font-weight:800">Aa<small>800</small></span>
+        </div>
+        <div class="cell-text">
+          <h3>Only real weights</h3>
+          <p>The weight menu lists what the font actually has, so you never design with one that doesn't exist.</p>
+        </div>
+      </article>
+      <article class="cell">
+        <div class="url" aria-hidden="true"><svg class="ic"><use href="#i-link"/></svg><span>fontroom.vercel.app/app#h=Syne&amp;b=Inter&amp;w=700</span></div>
+        <div class="cell-text">
+          <h3>Share the exact setup</h3>
+          <p>The link holds both fonts, the weight, size, colour and theme.</p>
+        </div>
+      </article>
+      <article class="cell">
+        <div class="saved" aria-hidden="true">
+          <div><b style="font-family:'Fraunces',serif;font-weight:700">Fraunces</b><span>Inter</span><svg class="ic"><use href="#i-bookmark"/></svg></div>
+          <div><b style="font-family:'Syne',sans-serif;font-weight:700">Syne</b><span>Inter</span><svg class="ic"><use href="#i-bookmark"/></svg></div>
+        </div>
+        <div class="cell-text">
+          <h3>Save pairings you like</h3>
+          <p>They stay in your browser for next time.</p>
+        </div>
+      </article>
+      <article class="cell">
+        <div class="keys" aria-hidden="true">
+          <span><kbd>X</kbd>Swap</span><span><kbd>R</kbd>Random</span><span><kbd>S</kbd>Save</span><span><kbd>?</kbd>All keys</span>
+        </div>
+        <div class="cell-text">
+          <h3>Keyboard first</h3>
+          <p>Search, swap, shuffle and save without leaving the keys.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap section" id="code" aria-labelledby="codeTitle">
+    <h2 id="codeTitle">Copy the code for your stack</h2>
+    <p class="lede">Only the weights you use. It follows the font you picked above.</p>
+    <div class="code">
+      <div class="code-head">
+        <div class="stacks" role="tablist" aria-label="Stack" id="stackTabs"></div>
+        <button type="button" class="copy" id="copyBtn"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button>
+      </div>
+      <div class="code-file" id="codeFile"></div>
+      <pre id="codePanel" role="tabpanel" tabindex="0"><code id="codeOut"></code></pre>
+    </div>
+  </section>
+
+  <section class="oss" aria-labelledby="ossTitle">
+    <div class="threads" id="ossThreads" aria-hidden="true"></div>
+    <div class="wrap oss-inner">
+      <h2 id="ossTitle">Free and open source</h2>
+      <p>MIT licensed. Read the code, open an issue or send a pull request.</p>
+      <div class="actions">
+        <a class="btn primary lg" href="app.html">Open Fontroom<svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn ghost lg" href="https://github.com/appdever01/fontroom"><svg class="ic"><use href="#i-github"/></svg>View on GitHub</a>
+      </div>
+    </div>
   </section>
 </main>
 
-<footer><div class="wrap"><span>Free and open source. Fonts load from Google Fonts.</span><span><a href="https://github.com/appdever01/fontroom">GitHub</a> · <a href="primitives.html">Design primitives</a> · Set in Aspekta, SIL Open Font License 1.1</span></div></footer>
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <a class="brand" href="index.html"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><span>Fontroom</span></a>
+      <p>See fonts where they'll actually live, then ship them.</p>
+    </div>
+    <nav class="foot-col" aria-label="Product">
+      <h3>Product</h3>
+      <a href="app.html">Open Fontroom</a>
+      <a href="primitives.html">Design primitives</a>
+      <a href="slop.html">The "before" version</a>
+    </nav>
+    <nav class="foot-col" aria-label="Project">
+      <h3>Project</h3>
+      <a href="https://github.com/appdever01/fontroom">Source code</a>
+      <a href="https://github.com/appdever01/fontroom/issues">Report an issue</a>
+      <a href="https://github.com/appdever01/fontroom/blob/main/CONTRIBUTING.md">Contributing</a>
+    </nav>
+    <nav class="foot-col" aria-label="Credits">
+      <h3>Credits</h3>
+      <a href="https://fonts.google.com">Google Fonts</a>
+      <a href="https://github.com/ivodolenc/aspekta">Aspekta</a>
+      <a href="https://github.com/ateliertriay/bricolage">Bricolage Grotesque</a>
+      <a href="https://reactbits.dev">Threads by React Bits</a>
+    </nav>
+  </div>
+  <div class="wrap foot-base">
+    <span>MIT License</span>
+    <span>Your font files never leave your device.</span>
+  </div>
+  <div class="foot-word" aria-hidden="true">Fontroom</div>
+</footer>
 
-<script>
-(() => {
-  const FONTS = [
-    { name: "Fraunces", w: 700, fb: "serif" },
-    { name: "Space Grotesk", w: 700, fb: "sans-serif" },
-    { name: "Instrument Serif", w: 400, fb: "serif" },
-    { name: "Bricolage Grotesque", w: 700, fb: "sans-serif" },
-    { name: "Playfair Display", w: 700, fb: "serif" },
-    { name: "Syne", w: 700, fb: "sans-serif" }
-  ];
-  const stage = document.getElementById("demoStage");
-  const root = document.getElementById("chips");
-  let current = 0;
-  root.innerHTML = FONTS.map((f, i) => `<button type="button" class="chip" role="radio" data-i="${i}" style="font-family:'${f.name}',${f.fb};font-weight:${f.w}">${f.name}</button>`).join("");
-  const btns = [...root.querySelectorAll(".chip")];
-  function select(i, focus) {
-    current = i;
-    const f = FONTS[i];
-    stage.style.setProperty("--fh", `"${f.name}", ${f.fb}`);
-    stage.style.setProperty("--hw", f.w);
-    btns.forEach((b, j) => { b.setAttribute("aria-checked", String(j === i)); b.tabIndex = j === i ? 0 : -1; });
-    if (focus) btns[i].focus();
-  }
-  btns.forEach((b, i) => {
-    b.addEventListener("click", () => select(i));
-    b.addEventListener("keydown", e => {
-      const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-      if (!d) return;
-      e.preventDefault();
-      select((current + d + FONTS.length) % FONTS.length, true);
-    });
-  });
-  select(0);
-})();
-</script>
+<script src="js/core.js"></script>
+<script src="js/threads.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>

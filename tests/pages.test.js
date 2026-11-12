@@ -10,7 +10,54 @@ test("landing page links into the tool and the primitives", async () => {
   const hrefs = p.$$("a").map(a => a.getAttribute("href"));
   assert.ok(hrefs.includes("app.html"));
   assert.ok(hrefs.includes("primitives.html"));
+  assert.ok(hrefs.includes("https://github.com/appdever01/fontroom"));
+  assert.equal(p.$$("select").length, 0);
   assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
+test("landing font picker drives the preview and the code", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, $$, key } = p;
+  const opts = $$(".font-opt");
+  assert.equal(opts.length, 6);
+  assert.equal(opts[0].getAttribute("aria-checked"), "true");
+  assert.match($("#stage").style.getPropertyValue("--fh"), /Fraunces/);
+  assert.match($("#codeOut").textContent, /Fraunces, Inter.*next\/font\/google/);
+  opts[1].click();
+  assert.match($("#stage").style.getPropertyValue("--fh"), /Syne/);
+  assert.match($("#codeOut").textContent, /Syne/);
+  key(opts[1], "ArrowDown");
+  assert.equal(opts[2].getAttribute("aria-checked"), "true");
+  assert.equal(p.d.activeElement, opts[2]);
+  const stacks = $$("#stackTabs [role=tab]");
+  assert.equal(stacks.length, 5);
+  stacks[3].click();
+  assert.equal(stacks[3].getAttribute("aria-selected"), "true");
+  assert.match($("#codeOut").textContent, /GoogleFonts\.instrumentSerif/);
+  key(stacks[3], "ArrowRight");
+  assert.match($("#codeOut").textContent, /expo-font/);
+  $("#copyBtn").click();
+  await p.tick(20);
+  assert.equal($("#copyBtn span").textContent, "Copied");
+  assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
+test("landing screenshot tabs switch the image", async () => {
+  const p = openPage("index.html");
+  await p.tick(20);
+  const { $, $$, key } = p;
+  const tabs = $$("#shotTabs [role=tab]");
+  const imgs = $$("#shots img");
+  tabs[1].click();
+  assert.ok(imgs[1].classList.contains("is-on"));
+  assert.ok(!imgs[0].classList.contains("is-on"));
+  key(tabs[1], "End");
+  assert.ok(imgs[2].classList.contains("is-on"));
+  assert.equal($("#shots").getAttribute("aria-labelledby"), "tab-mag");
+  p.w.close();
 });
 
 test("primitives page components work", async () => {
