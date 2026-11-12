@@ -277,10 +277,9 @@
     const slides = [...flipper.querySelectorAll(".fl-slide")];
     const picks = [...flipper.querySelectorAll(".fl-tab")];
     const strip = flipper.querySelector(".fl-strip"), view = flipper.querySelector(".fl-view");
-    const count = $("flipCount"), prev = $("flipPrev"), next = $("flipNext");
+    const count = $("flipCount");
     const n = slides.length;
     let at = 0;
-    count.setAttribute("aria-live", "off");
     const show = (to, dir) => {
       if (to === at) return;
       const from = slides[at], s = slides[to];
@@ -294,27 +293,19 @@
       strip.style.setProperty("--i", String(at));
       view.dataset.p = String(at);
       picks.forEach((b, i) => b.setAttribute("aria-pressed", String(i === at)));
-      count.textContent = `${at + 1} of ${n}`;
+      count.textContent = `${picks[at].getAttribute("aria-label")}, ${at + 1} of ${n}`;
     };
     const go = dir => show((at + dir + n) % n, dir);
     const play = autoplay(flipper, 2800, () => go(1));
     const takeOver = () => { play.stop(); count.setAttribute("aria-live", "polite"); };
-    const press = (btn, dir) => {
-      takeOver();
-      const k = btn.querySelector("kbd");
-      k.classList.add("press");
-      setTimeout(() => k.classList.remove("press"), 140);
-      go(dir);
-    };
-    prev.addEventListener("click", () => press(prev, -1));
-    next.addEventListener("click", () => press(next, 1));
     picks.forEach((b, i) => b.addEventListener("click", () => { takeOver(); show(i, i > at ? 1 : -1); }));
     document.addEventListener("keydown", e => {
       if ((e.key !== "[" && e.key !== "]") || e.metaKey || e.ctrlKey || e.altKey || !play.seen()) return;
       const t = e.target;
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
       e.preventDefault();
-      press(e.key === "[" ? prev : next, e.key === "[" ? -1 : 1);
+      takeOver();
+      go(e.key === "[" ? -1 : 1);
     });
   }
 
