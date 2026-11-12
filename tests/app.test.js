@@ -51,11 +51,28 @@ test("search, preview, keep, weights, templates and code", async () => {
 
   $("#codeBtn").click();
   assert.ok(!$("#drawer").hidden);
+  assert.equal($("#codeBtn").getAttribute("aria-expanded"), "true");
   assert.equal($$("#tabs [role=tab]").length, 5);
   for (const t of ["tailwind", "next", "flutter", "expo"]) { $(`#tab-${t}`).click(); assert.ok($("#codeBody").textContent.length > 50, t); }
   assert.match($("#codeBody").textContent, /InstrumentSerif_400Regular/);
+  const copyBtn = $("#codeBody .copy");
+  copyBtn.click(); await tick();
+  assert.ok(copyBtn.classList.contains("is-done"));
+  assert.equal(copyBtn.getAttribute("aria-label"), "Copied");
+  assert.ok(copyBtn.closest(".code-block").classList.contains("is-copied"));
   key(p.d.body, "Escape");
+  assert.ok($("#drawer").classList.contains("closing"));
+  assert.equal($("#codeBtn").getAttribute("aria-expanded"), "false");
+  $("#codeBtn").click();
+  assert.ok(!$("#drawer").classList.contains("closing"), "reopening cancels the close");
+  key(p.d.body, "Escape"); await tick(300);
   assert.ok($("#drawer").hidden);
+  assert.ok(!$("#drawer").classList.contains("closing"));
+  $("#shareBtn").click(); await tick();
+  assert.ok($("#shareBtn").classList.contains("is-done"));
+  assert.match($("#toasts").textContent, /Link copied/);
+  await tick(1900);
+  assert.ok(!$("#shareBtn").classList.contains("is-done"));
   assert.equal($$("select").length, 0);
   assert.deepEqual(p.errors, []);
 });
@@ -294,7 +311,10 @@ test("any website: paste a link, fonts follow, links and back stay in the previe
 
   $("#tplDD .dd-btn").click();
   $$("#tplDD .dd-opt")[1].click();
-  assert.ok($("#urlBar").hidden);
+  assert.ok(!$("#urlBar").hidden, "the link bar stays on sample sites");
+  assert.ok($("#urlBar").classList.contains("is-sample"));
+  assert.equal($("#urlInput").value, "");
+  assert.ok($("#urlBack").hidden);
   assert.ok(!$(".app").classList.contains("is-live"));
   assert.equal(site.getAttribute("src"), "about:blank", "the site stops running when you leave it");
   assert.doesNotMatch(w.location.hash, /url=/);
@@ -306,6 +326,49 @@ test("any website: paste a link, fonts follow, links and back stay in the previe
   assert.equal($("#tplDD .dd-v").textContent, "Your website");
   assert.equal(d.activeElement, $("#urlInput"));
   assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Fstripe.com%2Fpricing");
+  assert.deepEqual(p.errors, []);
+});
+
+test("the link bar shows on the default sample and switches to your website", async () => {
+  const p = openPage("app.html");
+  await p.tick(250);
+  const { $, $$, w, key, type } = p;
+  const site = $("#siteFrame");
+  assert.equal($("#tplDD .dd-v").textContent, "Northwind");
+  assert.ok(!$("#urlBar").hidden);
+  assert.ok($("#urlBar").classList.contains("is-sample"));
+  assert.ok(!$("#urlTag").hidden);
+  assert.match($("#urlTag").textContent, /Try your site/);
+  assert.match($("#urlInput").placeholder, /paste a link/);
+  assert.ok(!$("#site").hidden && $("#siteLive").hidden);
+
+  type($("#urlInput"), "hello");
+  $("#urlBar").requestSubmit();
+  assert.match($("#toasts").textContent, /doesn't look like a web address/);
+  assert.equal($("#tplDD .dd-v").textContent, "Northwind", "a bad link keeps the sample");
+  key($("#urlInput"), "Escape");
+  assert.equal($("#urlInput").value, "");
+
+  type($("#urlInput"), "linear.app");
+  $("#urlBar").requestSubmit();
+  assert.equal($("#tplDD .dd-v").textContent, "Your website");
+  assert.ok(!$("#urlBar").classList.contains("is-sample"));
+  assert.ok($("#urlTag").hidden);
+  assert.ok($("#site").hidden && !$("#siteLive").hidden);
+  assert.equal($("#urlInput").value, "https://linear.app/");
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2F");
+  assert.equal($("#phoneFrame").getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2F&ua=mobile");
+  assert.match(w.location.hash, /site=url&url=https%3A%2F%2Flinear\.app%2F/);
+  assert.ok($("#urlBack").hidden);
+
+  $("#tplDD .dd-btn").click();
+  $$("#tplDD .dd-opt")[2].click();
+  assert.equal($("#urlInput").value, "");
+  $("#urlInput").value = "stripe.com";
+  $("#urlInput").dispatchEvent(new w.Event("paste", { bubbles: true }));
+  await p.tick(10);
+  assert.equal($("#tplDD .dd-v").textContent, "Your website", "pasting a link on a sample opens it");
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Fstripe.com%2F");
   assert.deepEqual(p.errors, []);
 });
 

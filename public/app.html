@@ -143,14 +143,15 @@
       <button type="button" class="icon-btn" id="themeBtn"><svg class="ic"><use href="#i-moon"/></svg></button>
       <div class="swatches"><div class="sw-group" id="swatches" role="radiogroup" aria-label="Accent colour"></div><label class="sw sw-pick" id="pickWrap" title="Custom colour"><input type="color" id="accentPick" aria-label="Custom accent colour"></label></div>
       <span class="spacer"></span>
-      <button type="button" class="btn" id="shareBtn" aria-label="Copy link" title="Copy a link to this setup"><svg class="ic sm"><use href="#i-link"/></svg><span class="lbl">Copy link</span></button>
-      <button type="button" class="btn primary" id="codeBtn"><svg class="ic sm"><use href="#i-code"/></svg>Get code</button>
+      <button type="button" class="btn" id="shareBtn" aria-label="Copy link" title="Copy a link to this setup"><span class="swap"><svg class="ic sm a"><use href="#i-link"/></svg><svg class="ic sm b tick"><use href="#i-check"/></svg></span><span class="lbl swap swap-lbl"><span class="a">Copy link</span><span class="b" aria-hidden="true">Copied</span></span></button>
+      <button type="button" class="btn primary" id="codeBtn" aria-controls="drawer" aria-expanded="false"><svg class="ic sm"><use href="#i-code"/></svg>Get code</button>
     </div>
-    <form class="urlbar" id="urlBar" hidden>
+    <form class="urlbar" id="urlBar">
       <button type="button" class="icon-btn" id="urlBack" aria-label="Back to the previous page" title="Back" hidden><svg class="ic"><use href="#i-back"/></svg></button>
       <label class="urlfield">
         <svg class="ic sm"><use href="#i-link"/></svg>
         <span class="sr">Website address</span>
+        <span class="url-tag" id="urlTag" aria-hidden="true">Try your site</span>
         <input id="urlInput" type="text" inputmode="url" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste a link to any website, like linear.app">
       </label>
       <button type="submit" class="btn primary" id="urlGo">Preview</button>

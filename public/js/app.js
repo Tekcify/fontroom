@@ -39,6 +39,15 @@
     setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 220); }, kind === "err" ? 4600 : 2600);
   }
 
+  const reduceMotion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function flash(btn, ok) {
+    clearTimeout(btn._flash);
+    btn.classList.remove("is-done", "is-err");
+    void btn.offsetWidth;
+    btn.classList.add(ok ? "is-done" : "is-err");
+    btn._flash = setTimeout(() => btn.classList.remove("is-done", "is-err"), ok ? 1800 : 400);
+  }
+
   async function copyText(text) {
     try { await navigator.clipboard.writeText(text); return true; }
     catch (e) {
@@ -504,6 +513,14 @@
     renderLive(force); syncHash();
     return true;
   }
+  function submitUrl(raw, force) {
+    const url = normalizeSiteUrl(raw);
+    if (isLive() || !url) return openUrl(raw, force);
+    liveBack.length = 0;
+    state.url = url; urlInput.value = url;
+    setTemplate(LIVE);
+    return true;
+  }
   frames.forEach(f => f.el.addEventListener("load", () => {
     const src = f.el.getAttribute("src");
     if (src && src !== "about:blank") setMsg(f, "");
@@ -518,11 +535,11 @@
   });
   $("#urlBar").addEventListener("submit", e => {
     e.preventDefault();
-    if (urlInput.value.trim()) openUrl(urlInput.value, true);
+    if (urlInput.value.trim()) submitUrl(urlInput.value, true);
     else { toast("Paste a link first, like linear.app.", "err", "live"); urlInput.focus(); }
   });
-  urlInput.addEventListener("paste", () => setTimeout(() => { if (normalizeSiteUrl(urlInput.value)) openUrl(urlInput.value); }, 0));
-  urlInput.addEventListener("keydown", e => { if (e.key === "Escape" && urlInput.value !== state.url) { e.preventDefault(); urlInput.value = state.url; } });
+  urlInput.addEventListener("paste", () => setTimeout(() => { if (normalizeSiteUrl(urlInput.value)) submitUrl(urlInput.value); }, 0));
+  urlInput.addEventListener("keydown", e => { const shown = isLive() ? state.url : ""; if (e.key === "Escape" && urlInput.value !== shown) { e.preventDefault(); urlInput.value = shown; } });
   $("#urlBack").addEventListener("click", () => {
     const prev = liveBack.pop();
     if (!prev) return;
@@ -534,12 +551,16 @@
   function renderMocks() {
     const live = isLive();
     $(".app").classList.toggle("is-live", live);
-    $("#urlBar").hidden = !live;
+    $("#urlBar").classList.toggle("is-sample", !live);
+    $("#urlTag").hidden = live;
+    urlInput.placeholder = live ? "Paste a link to any website, like linear.app" : "paste a link, like linear.app";
     $("#site").hidden = live; $("#screen").hidden = live;
     $("#siteLive").hidden = !live; $("#phoneLive").hidden = !live;
     $("#phoneLabel").textContent = live ? "Mobile" : "Mobile app";
     if (live) { renderLive(); tplDD.update(); return; }
     unloadFrames();
+    $("#urlBack").hidden = true;
+    if (document.activeElement !== urlInput) urlInput.value = "";
     const t = TEMPLATES[state.template];
     const site = $("#site"), screen = $("#screen");
     site.dataset.t = state.template; screen.dataset.t = state.template;
@@ -619,25 +640,40 @@
     renderTabs();
     $("#drawerSub").textContent = `${inp.heading} ${inp.hWeight} for headings, ${inp.body} for body text` + (usesLocal() ? ". Your own font file needs self-hosting, so this shows HTML + CSS and Next.js setup." : "");
     blocks = (usesLocal() ? buildLocalCode(inp) : buildCode(inp))[codeTab];
-    $("#codeBody").innerHTML = blocks.map((bk, i) => `<div class="code-block"><div class="code-head"><span>${esc(bk.label)}</span><button type="button" class="copy" data-i="${i}"><svg class="ic sm"><use href="#i-copy"/></svg>Copy</button></div><pre><code>${esc(bk.code)}</code></pre></div>`).join("");
+    $("#codeBody").innerHTML = blocks.map((bk, i) => `<div class="code-block"><div class="code-head"><span>${esc(bk.label)}</span><button type="button" class="copy" data-i="${i}"><span class="swap"><svg class="ic sm a"><use href="#i-copy"/></svg><svg class="ic sm b tick"><use href="#i-check"/></svg></span><span class="swap swap-lbl"><span class="a">Copy</span><span class="b" aria-hidden="true">Copied</span></span></button></div><pre><code>${esc(bk.code)}</code></pre></div>`).join("");
   }
   $("#codeBody").addEventListener("click", async e => {
     const b = e.target.closest(".copy");
     if (!b) return;
     const ok = await copyText(blocks[+b.dataset.i].code);
+    flash(b, ok);
     if (ok) {
-      b.innerHTML = '<svg class="ic sm"><use href="#i-check"/></svg>Copied';
-      setTimeout(() => { b.innerHTML = '<svg class="ic sm"><use href="#i-copy"/></svg>Copy'; }, 1600);
+      const blk = b.closest(".code-block");
+      blk.classList.remove("is-copied"); void blk.offsetWidth; blk.classList.add("is-copied");
+      b.setAttribute("aria-label", "Copied");
+      setTimeout(() => b.removeAttribute("aria-label"), 1800);
     } else toast("Your browser blocked the clipboard. Select the code and copy it manually.", "err");
   });
-  function openDrawer() { $("#drawer").hidden = false; renderTabs(); renderCode(); $("#tab-" + codeTab).focus(); }
-  function closeDrawer() { $("#drawer").hidden = true; $("#codeBtn").focus(); }
-  $("#codeBtn").addEventListener("click", () => ($("#drawer").hidden ? openDrawer() : closeDrawer()));
+  const drawer = $("#drawer");
+  const drawerOpen = () => !drawer.hidden && !drawer.classList.contains("closing");
+  let drawerTimer = 0;
+  function finishClose() { clearTimeout(drawerTimer); drawer.classList.remove("closing"); drawer.hidden = true; }
+  function openDrawer() { clearTimeout(drawerTimer); drawer.classList.remove("closing"); drawer.hidden = false; $("#codeBtn").setAttribute("aria-expanded", "true"); renderTabs(); renderCode(); $("#tab-" + codeTab).focus(); }
+  function closeDrawer() {
+    $("#codeBtn").setAttribute("aria-expanded", "false");
+    $("#codeBtn").focus();
+    if (drawer.hidden || (reduceMotion && reduceMotion.matches)) { finishClose(); return; }
+    drawer.classList.add("closing");
+    drawerTimer = setTimeout(finishClose, 260);
+  }
+  drawer.addEventListener("animationend", e => { if (e.target === drawer && drawer.classList.contains("closing")) finishClose(); });
+  $("#codeBtn").addEventListener("click", () => (drawerOpen() ? closeDrawer() : openDrawer()));
   $("#drawerClose").addEventListener("click", closeDrawer);
 
   $("#shareBtn").addEventListener("click", async () => {
     syncHash();
     const ok = await copyText(location.href);
+    flash($("#shareBtn"), ok);
     if (!ok) { toast("Couldn't copy the link. Copy it from the address bar instead.", "err"); return; }
     toast(usesLocal() ? "Link copied. Your own font file stays on this device, so the link opens with the default font in its place." : "Link copied. It opens with this exact setup.");
   });
@@ -820,7 +856,7 @@
   document.addEventListener("keydown", e => {
     const tag = (e.target.tagName || "").toLowerCase();
     const typing = tag === "input" || tag === "textarea" || e.target.isContentEditable;
-    if (e.key === "Escape" && !$("#drawer").hidden && !e.defaultPrevented) { closeDrawer(); return; }
+    if (e.key === "Escape" && drawerOpen() && !e.defaultPrevented) { closeDrawer(); return; }
     if (typing || e.metaKey || e.ctrlKey || e.altKey || keys.hasAttribute("open")) return;
     if (e.key === "Escape" && sheetOpen()) { setSheet(false); return; }
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
