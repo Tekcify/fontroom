@@ -25,7 +25,7 @@ function fakeGoogleFetch(log) {
   };
 }
 
-function openPage(rel, { hash = "", fetchLog = [], storage } = {}) {
+function openPage(rel, { hash = "", fetchLog = [], storage, media } = {}) {
   const html = inlineScripts(read(rel));
   const errors = [];
   const dom = new JSDOM(html, {
@@ -35,6 +35,7 @@ function openPage(rel, { hash = "", fetchLog = [], storage } = {}) {
     beforeParse(w) {
       w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
       w.ResizeObserver = class { observe() {} disconnect() {} };
+      if (media) w.matchMedia = q => ({ media: q, matches: media(q), addEventListener() {}, removeEventListener() {} });
       w.Element.prototype.scrollIntoView = function () {};
       w.HTMLCanvasElement.prototype.getContext = () => null;
       w.fetch = fakeGoogleFetch(fetchLog);

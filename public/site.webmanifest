@@ -1,0 +1,14 @@
+{
+  "name": "Fontroom",
+  "short_name": "Fontroom",
+  "description": "Try any Google Font or your own font file on a real website and phone app, then copy the code.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#04060a",
+  "theme_color": "#04060a",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

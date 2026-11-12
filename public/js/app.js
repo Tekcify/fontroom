@@ -409,7 +409,7 @@
     renderSlots(); renderList(); applyFonts(); syncSlotTabs();
   }
   slotBtns.forEach((b, i) => {
-    b.addEventListener("click", () => { selectSlot(b.dataset.slot); q.focus(); });
+    b.addEventListener("click", () => { selectSlot(b.dataset.slot); if (isNarrow()) setSheet(true); else q.focus(); });
     b.addEventListener("keydown", e => {
       if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
       e.preventDefault();
@@ -417,6 +417,23 @@
     });
   });
   const syncSlotTabs = () => slotBtns.forEach(b => { b.tabIndex = b.dataset.slot === state.slot ? 0 : -1; });
+
+  const appEl = $(".app"), sideEl = $(".side"), sheetBtn = $("#sheetBtn"), sideBody = $("#sideBody");
+  const narrowMq = window.matchMedia ? window.matchMedia("(max-width:980px)") : null;
+  const isNarrow = () => !!(narrowMq && narrowMq.matches);
+  const sheetOpen = () => appEl.classList.contains("sheet-open");
+  function setSheet(open) {
+    open = !!open && isNarrow();
+    appEl.classList.toggle("sheet-open", open);
+    sheetBtn.setAttribute("aria-expanded", String(open));
+    $("#sheetLabel").textContent = open ? "Hide fonts" : "Show fonts";
+    sideBody.inert = isNarrow() && !open;
+  }
+  sheetBtn.addEventListener("click", () => setSheet(!sheetOpen()));
+  $("#stageWrap").addEventListener("pointerdown", () => { if (sheetOpen()) setSheet(false); });
+  if (narrowMq && narrowMq.addEventListener) narrowMq.addEventListener("change", () => setSheet(false));
+  new ResizeObserver(() => { if (!sheetOpen()) appEl.style.setProperty("--sheet-h", `${sideEl.offsetHeight}px`); }).observe(sideEl);
+  setSheet(false);
 
   function renderTheme() {
     const dark = state.theme === "dark";
@@ -805,9 +822,10 @@
     const typing = tag === "input" || tag === "textarea" || e.target.isContentEditable;
     if (e.key === "Escape" && !$("#drawer").hidden && !e.defaultPrevented) { closeDrawer(); return; }
     if (typing || e.metaKey || e.ctrlKey || e.altKey || keys.hasAttribute("open")) return;
+    if (e.key === "Escape" && sheetOpen()) { setSheet(false); return; }
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     const actions = {
-      "/": () => { showSideTab("fonts"); q.focus(); q.select(); },
+      "/": () => { showSideTab("fonts"); setSheet(true); q.focus(); q.select(); },
       "?": openKeys,
       x: swapFonts,
       r: shufflePair,

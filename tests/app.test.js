@@ -319,3 +319,41 @@ test("a shared link opens the same website preview", async () => {
   assert.equal($("#domain").textContent, "example.com");
   assert.deepEqual(p.errors, []);
 });
+
+test("phones pick fonts from a bottom sheet that keeps the preview in view", async () => {
+  const p = openPage("app.html", { media: q => q.includes("max-width:980px") });
+  const { $, d, key, w, tick } = p;
+  await tick(200);
+  const app = $(".app"), handle = $("#sheetBtn");
+  assert.equal(app.classList.contains("sheet-open"), false);
+  assert.equal(handle.getAttribute("aria-expanded"), "false");
+  assert.equal($("#sideBody").inert, true, "hidden picker controls stay out of the tab order");
+  $(".slot[data-slot=body]").click();
+  assert.ok(app.classList.contains("sheet-open"), "tapping a slot opens the picker");
+  assert.equal($(".slot[data-slot=body]").getAttribute("aria-checked"), "true");
+  assert.notEqual(d.activeElement, $("#q"), "the keyboard does not pop up on its own");
+  assert.equal($("#sideBody").inert, false);
+  assert.equal($("#sheetLabel").textContent, "Hide fonts");
+  key(d.body, "Escape");
+  assert.equal(app.classList.contains("sheet-open"), false, "Escape closes the picker");
+  handle.click();
+  assert.ok(app.classList.contains("sheet-open"));
+  $("#stageWrap").dispatchEvent(new w.Event("pointerdown", { bubbles: true }));
+  assert.equal(app.classList.contains("sheet-open"), false, "touching the preview closes the picker");
+  assert.deepEqual(p.errors, []);
+});
+
+test("desktop keeps the sidebar open and the font list scrollable", async () => {
+  const p = openPage("app.html", { media: () => false });
+  const { $, d, tick } = p;
+  await tick(200);
+  assert.equal($("#sideBody").inert, false);
+  $(".slot[data-slot=body]").click();
+  assert.equal($(".app").classList.contains("sheet-open"), false);
+  assert.equal(d.activeElement, $("#q"));
+  const css = fs.readFileSync(path.join(PUBLIC, "css/app.css"), "utf8");
+  assert.match(css, /\.side\{[^}]*overflow-y:auto/, "a short window scrolls the sidebar instead of overlapping it");
+  assert.match(css, /#fontsPanel\{min-height:310px\}/);
+  assert.match(css, /\.list\{[^}]*mask-image:linear-gradient/, "the last visible font fades to show the list scrolls");
+  assert.match(fs.readFileSync(path.join(PUBLIC, "app.html"), "utf8"), /viewport-fit=cover/);
+});

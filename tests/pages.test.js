@@ -142,7 +142,7 @@ test("landing page story: problem, steps, questions and one call to action", asy
   assert.equal($$(".steps li").length, 3);
   assert.equal($$(".bento .cell").length, 4);
   const qa = $$(".qa details");
-  assert.equal(qa.length, 5);
+  assert.equal(qa.length, 8);
   assert.ok(qa[0].open);
   assert.ok(qa.slice(1).every(d => !d.open));
   const opens = $$("a").filter(a => a.getAttribute("href") === "app.html").map(a => a.textContent.trim());

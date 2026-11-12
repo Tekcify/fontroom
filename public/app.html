@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fontroom</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fontroom app: try Google Fonts and font pairings live</title>
+<link rel="canonical" href="https://fontroom.vercel.app/app">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="manifest" href="site.webmanifest">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Fontroom">
+<meta property="og:site_name" content="Fontroom">
+<meta property="og:title" content="Fontroom app: try Google Fonts and font pairings live">
 <meta property="og:description" content="Try any Google Font, or your own font file, on a live website and mobile app. Then copy the code for your stack.">
 <meta property="og:url" content="https://fontroom.vercel.app/app">
 <meta property="og:image" content="https://fontroom.vercel.app/og.png?v=2">
@@ -15,7 +19,10 @@
 <meta name="twitter:image" content="https://fontroom.vercel.app/og.png?v=2">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#04060a">
-<meta name="description" content="Try any Google Font on a real website and mobile app before you touch your code.">
+<meta name="description" content="Try any Google Font or your own font file on a sample website, your own live site and a phone app. Pair heading and body fonts, then copy the code.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","@id":"https://fontroom.vercel.app/app#webpage","url":"https://fontroom.vercel.app/app","name":"Fontroom app: try Google Fonts and font pairings live","isPartOf":{"@id":"https://fontroom.vercel.app/#website"},"mainEntity":{"@id":"https://fontroom.vercel.app/#app"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Fontroom","item":"https://fontroom.vercel.app/"},{"@type":"ListItem","position":2,"name":"App","item":"https://fontroom.vercel.app/app"}]}}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" href="fonts/OnestVF.woff2" as="font" type="font/woff2" crossorigin>
@@ -66,9 +73,12 @@
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M15.5 7H8.5M12.499 11H8.49902" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 22H6C4.89543 22 4 21.1046 4 20M4 20C4 18.8954 4.89543 18 6 18H20V6C20 4.11438 20 3.17157 19.4142 2.58579C18.8284 2 17.8856 2 16 2H10C7.17157 2 5.75736 2 4.87868 2.87868C4 3.75736 4 5.17157 4 8V20Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M19.5 18C19.5 18 18.5 18.7628 18.5 20C18.5 21.2372 19.5 22 19.5 22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></symbol>
 </svg>
 
+<h1 class="sr">Fontroom: preview fonts on a website and phone app</h1>
 <div class="app">
   <aside class="side" aria-label="Fonts">
     <a class="brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#13161b"/><path d="M14 54V30a18 18 0 0 1 36 0v24z" fill="#f2f4f7"/><path d="M24 54V31a8 8 0 0 1 16 0v23z" fill="#ff5a36"/></svg>Fontroom<small id="fontCount"></small></a>
+
+    <button type="button" class="sheet-handle" id="sheetBtn" aria-expanded="false" aria-controls="sideBody"><span class="sr" id="sheetLabel">Show fonts</span></button>
 
     <div class="slots" role="radiogroup" aria-label="Which font to change">
       <button type="button" class="slot" role="radio" data-slot="heading">
@@ -80,6 +90,7 @@
         <span class="slot-name"></span><span class="slot-meta"></span>
       </button>
     </div>
+    <div class="side-body" id="sideBody">
     <div class="slot-actions">
       <button type="button" class="btn" id="swapBtn"><svg class="ic sm"><use href="#i-swap"/></svg>Swap</button>
       <button type="button" class="btn" id="shuffleBtn"><svg class="ic sm"><use href="#i-shuffle"/></svg>Try a pairing</button>
@@ -103,7 +114,7 @@
     <div class="cats" id="cats" role="radiogroup" aria-label="Category"></div>
 
     <div class="list-wrap">
-      <div class="list-head"><span id="listCount"></span><span>Hover to try, click to keep</span></div>
+      <div class="list-head"><span id="listCount"></span><span class="hint-hover">Hover to try, click to keep</span><span class="hint-touch">Tap a font to try it</span></div>
       <div class="list" id="fontList" role="listbox" aria-label="Fonts"></div>
     </div>
     </div>
@@ -117,11 +128,13 @@
       <button type="button" class="icon-btn" id="keysBtn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts"><svg class="ic"><use href="#i-keyboard"/></svg></button>
       <input type="file" id="fontFile" accept=".woff2,.woff,.ttf,.otf" hidden>
     </div>
+    </div>
 
     <p class="side-foot">Click any text in the preview to rewrite it, or pick “Your website” under Site to try fonts on any link. Fonts load live from Google Fonts. Your own font files stay on this device. <a href="https://github.com/Tekcify/fontroom">Source on GitHub</a></p>
   </aside>
 
   <main class="main">
+    <a class="brand m-brand" href="index.html"><svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="15" fill="#13161b"/><path d="M14 54V30a18 18 0 0 1 36 0v24z" fill="#f2f4f7"/><path d="M24 54V31a8 8 0 0 1 16 0v23z" fill="#ff5a36"/></svg>Fontroom</a>
     <div class="toolbar">
       <div class="seg" id="viewSeg" role="radiogroup" aria-label="Preview"></div>
       <div class="dd" id="tplDD"></div>

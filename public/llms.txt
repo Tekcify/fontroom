@@ -1,0 +1,45 @@
+# Fontroom
+
+> Fontroom is a free, open source font preview tool. Pick any Google Font or your own font file, see it on a realistic website, on your own live website and in a phone app, compare heading and body pairings, then copy the setup code for HTML and CSS, Tailwind, Next.js, Flutter or Expo. No account, nothing to install, MIT licensed.
+
+Font sites show one sentence on a blank page. Real products have buttons, prices, menus and phone screens. Fontroom puts the font into those places so you can judge it before you change your code.
+
+## Use it
+
+- [Open Fontroom](https://fontroom.vercel.app/app): the font preview tool
+- [Landing page](https://fontroom.vercel.app/): what it does, how it works and FAQ
+- [Design primitives](https://fontroom.vercel.app/primitives): the tokens and components behind Fontroom
+- [Source code](https://github.com/Tekcify/fontroom): MIT licensed, issues and contributions welcome
+
+## What it does
+
+- Preview any Google Font on sample sites (SaaS, café, docs, magazine) and a matching phone app, side by side.
+- Preview fonts on your own live website: pick "Your website" under Site (shortcut L) and paste a link. It loads at desktop and phone widths with your fonts applied.
+- Try your own .woff2, .woff, .ttf or .otf file. It is read in the browser and never uploaded.
+- Set separate heading and body fonts, or press "Try a pairing" for a curated match.
+- The weight menu lists only weights the font really has, so the browser never fakes a bold. Variable fonts are detected.
+- Click any text in the preview to type your own words. Switch light and dark, size and accent colour.
+- Save pairings in your browser and flip between them with [ and ].
+- Share a link that holds both fonts, the weight, size, colour and theme, for example https://fontroom.vercel.app/app#h=Syne&b=Inter&w=700
+- Get code for HTML and CSS, Tailwind, Next.js (next/font), Flutter (google_fonts) and Expo, loading only the weights you use.
+
+## How to preview a font before using it
+
+1. Open https://fontroom.vercel.app/app and search Google Fonts by name, or drop in your own file.
+2. See it on the website and phone app. Click any text to type your own words.
+3. Press "Get code" and copy the setup for your stack.
+
+## FAQ
+
+- Is Fontroom free? Yes. It is free and open source under the MIT license. No account, nothing to install.
+- Can I preview fonts on my own website? Yes. Pick "Your website" under Site, or press L, and paste a link. Some single page apps and sites behind bot checks may not load.
+- Do my font files get uploaded? No. Your file is read in your browser and stays on your device. It is not added to share links or saved pairings.
+- How do I find a good font pairing? Set a heading font and a body font, or press "Try a pairing". Save the ones you like and flip between them with [ and ].
+- Does Fontroom support variable fonts? Yes. Google Font weight ranges are shown as they exist, and your own variable files are detected.
+- Can I use these fonts in a commercial product? Google Fonts are open source, so almost always yes. Check the license on the font's Google Fonts page. For your own files, your font license applies.
+- Which stacks does the code cover? Plain HTML and CSS, Tailwind, Next.js with next/font, Flutter with google_fonts, and Expo.
+- Where are saved pairings kept? In your browser. Nothing goes to a server.
+
+## Keyboard shortcuts
+
+/ search, ↑ ↓ preview fonts, Enter keep, H or B edit headings or body, X swap, R random pairing, S save, [ ] flip saved pairings, D light or dark, 1 2 3 show both, website or app, U your own font file, L your website, C get code, ? show shortcuts.
