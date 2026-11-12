@@ -1,4 +1,4 @@
-<img src="public/logo.svg" width="56" height="56" alt="">
+![Fontroom: see how a font really looks before you ship it](public/og.png)
 
 # Fontroom
 
