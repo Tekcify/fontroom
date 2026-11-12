@@ -328,6 +328,39 @@ test("landing page scrolls smoothly with a mouse or trackpad and natively otherw
   assert.match(read("css/home.css"), /html\.lenis\{scroll-behavior:auto\}/);
 });
 
+test("nav star button shows the real GitHub star count and caches it", async () => {
+  const live = openPage("index.html", { stars: 2 });
+  await live.tick(50);
+  const star = live.$("#ghStar");
+  assert.equal(star.getAttribute("href"), "https://github.com/Tekcify/fontroom");
+  assert.equal(live.$(".gh-star-label").textContent, "Star");
+  assert.ok(!live.$("#ghStars").hidden);
+  assert.equal(live.$("#ghStarsN").textContent, "2");
+  assert.equal(star.getAttribute("aria-label"), "Star Fontroom on GitHub, 2 stars");
+  assert.equal(JSON.parse(live.w.localStorage.getItem("fontroom.stars")).n, 2);
+  assert.ok(live.fetchLog.includes("https://api.github.com/repos/Tekcify/fontroom"));
+  live.w.close();
+
+  const log = [];
+  const cached = openPage("index.html", { fetchLog: log, stars: 9, storage: { "fontroom.stars": JSON.stringify({ n: 1234, t: Date.now() }) } });
+  await cached.tick(50);
+  assert.equal(cached.$("#ghStarsN").textContent, "1.2k");
+  assert.ok(!log.some(u => u.includes("api.github.com")), "a fresh cached count skips the request");
+  cached.w.close();
+
+  const big = openPage("index.html", { stars: 15400 });
+  await big.tick(50);
+  assert.equal(big.$("#ghStarsN").textContent, "15k");
+  big.w.close();
+
+  const down = openPage("index.html");
+  await down.tick(50);
+  assert.ok(down.$("#ghStars").hidden, "no count is shown when GitHub doesn't answer");
+  assert.equal(down.$("#ghStar").getAttribute("aria-label"), "Star Fontroom on GitHub");
+  assert.deepEqual(down.errors, []);
+  down.w.close();
+});
+
 test("landing page story: problem, steps, questions and one call to action", async () => {
   const p = openPage("index.html");
   await p.tick(50);

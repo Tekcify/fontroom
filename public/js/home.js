@@ -26,6 +26,31 @@
     window.addEventListener("load", () => lenis.resize());
   }
 
+  const ghStars = $("ghStars");
+  if (ghStars) {
+    const KEY = "fontroom.stars";
+    const fmt = n => n < 1000 ? String(n) : `${(n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "")}k`;
+    const show = n => {
+      $("ghStarsN").textContent = fmt(n);
+      ghStars.hidden = false;
+      $("ghStar").setAttribute("aria-label", `Star Fontroom on GitHub, ${n} ${n === 1 ? "star" : "stars"}`);
+    };
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(KEY)); } catch {}
+    const fresh = saved && Number.isInteger(saved.n) && Date.now() - saved.t < 36e5;
+    if (saved && Number.isInteger(saved.n)) show(saved.n);
+    if (!fresh) (async () => {
+      try {
+        const res = await fetch("https://api.github.com/repos/Tekcify/fontroom", { headers: { Accept: "application/vnd.github+json" } });
+        if (!res.ok) return;
+        const n = (await res.json()).stargazers_count;
+        if (!Number.isInteger(n)) return;
+        show(n);
+        try { localStorage.setItem(KEY, JSON.stringify({ n, t: Date.now() })); } catch {}
+      } catch {}
+    })();
+  }
+
   if (window.LightRays) {
     const base = { color: "#fff4ee", speed: 0.6, density: 1.3, sharpness: 0.55, haze: 0.25, atmosphere: 0.85, saturation: 0.7, maxRatio: small ? 1.25 : 2 };
     const hero = $("heroRays");

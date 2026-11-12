@@ -14,9 +14,14 @@ function loadCore() {
 return { FONTS, BY_NAME, PAIRS, CATS, CAT_LABEL, FALLBACK, parseWeights, weightsFromQuery, nearestWeight, bodyWeights, cssUrl, camelName, buildCode, buildLocalCode, parseFontFile, familyFromFile, FONT_FILE_EXT, normalizeSiteUrl };`)();
 }
 
-function fakeGoogleFetch(log) {
+function fakeGoogleFetch(log, stars) {
   return async url => {
     log.push(url);
+    if (url.startsWith("https://api.github.com/")) {
+      return stars === undefined
+        ? { ok: false, status: 403, json: async () => ({}) }
+        : { ok: true, status: 200, json: async () => ({ stargazers_count: stars }) };
+    }
     const fam = decodeURIComponent((url.match(/family=([^:&]+)/) || [])[1] || "").replace(/\+/g, " ");
     if (/^nope font$/i.test(fam)) return { ok: false, status: 400, text: async () => "" };
     if (fam === "Instrument Serif" && url.includes(":wght")) return { ok: false, status: 400, text: async () => "" };
@@ -25,7 +30,7 @@ function fakeGoogleFetch(log) {
   };
 }
 
-function openPage(rel, { hash = "", fetchLog = [], storage, media, visible = false } = {}) {
+function openPage(rel, { hash = "", fetchLog = [], storage, media, visible = false, stars } = {}) {
   const html = inlineScripts(read(rel));
   const errors = [];
   const dom = new JSDOM(html, {
@@ -40,7 +45,7 @@ function openPage(rel, { hash = "", fetchLog = [], storage, media, visible = fal
       if (media) w.matchMedia = q => ({ media: q, matches: media(q), addEventListener() {}, removeEventListener() {} });
       w.Element.prototype.scrollIntoView = function () {};
       w.HTMLCanvasElement.prototype.getContext = () => null;
-      w.fetch = fakeGoogleFetch(fetchLog);
+      w.fetch = fakeGoogleFetch(fetchLog, stars);
       w.navigator.clipboard = { writeText: async () => {} };
       w.FontFace = class { constructor(family, data, desc) { this.family = family; this.desc = desc; } load() { return Promise.resolve(this); } };
       Object.defineProperty(w.document, "fonts", { value: { add() {}, delete() {} } });
