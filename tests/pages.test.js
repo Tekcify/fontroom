@@ -97,3 +97,12 @@ test("slop pages link to each other, not to the real tool", () => {
   assert.ok(!read("slop.html").includes('href="app.html"'));
   assert.ok(read("slop-app.html").includes('href="slop.html"'));
 });
+
+test("landing page keeps phones from scrolling sideways", () => {
+  const css = read("css/home.css");
+  assert.match(css, /\.try\{grid-template-columns:minmax\(0,1fr\)/);
+  assert.match(css, /\.try-pick\{min-width:0\}/);
+  const html = read("index.html");
+  for (const label of ["SaaS", "Docs", "Magazine"]) assert.ok(html.includes(`<span class="s">${label}</span>`));
+  assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1">/);
+});

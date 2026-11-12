@@ -16,11 +16,14 @@
   });
 
   if (window.Threads) {
+    const mq = q => (window.matchMedia ? window.matchMedia(q).matches : false);
+    const small = mq("(max-width: 760px)");
+    const fine = mq("(pointer: fine)");
     const white = [0.96, 0.97, 0.98], red = [1, 0.35, 0.21];
     const hero = $("heroThreads");
-    if (hero) window.Threads(hero, { color: white, accent: red, amplitude: 1.25, distance: 0.32, lineCount: 64, thickness: 0.55, softness: 1.1, speed: 0.45, angle: -10, mouse: true, brightness: 1.1, opacity: 0.75, taper: 0.9 });
+    if (hero) window.Threads(hero, { color: white, accent: red, amplitude: small ? 1.5 : 1.25, distance: 0.32, lineCount: small ? 40 : 64, thickness: small ? 0.8 : 0.55, softness: 1.1, speed: 0.45, angle: small ? -20 : -10, mouse: fine, brightness: 1.1, opacity: small ? 0.6 : 0.75, taper: 0.9 });
     const oss = $("ossThreads");
-    if (oss) window.Threads(oss, { color: white, accent: red, amplitude: 1.1, distance: 0.28, lineCount: 48, thickness: 0.5, speed: 0.35, angle: 8, seed: 3, brightness: 1, opacity: 0.6 });
+    if (oss) window.Threads(oss, { color: white, accent: red, amplitude: 1.1, distance: 0.28, lineCount: small ? 30 : 48, thickness: small ? 0.7 : 0.5, speed: 0.35, angle: 8, seed: 3, brightness: 1, opacity: 0.6 });
   }
 
   const cycle = $("cycle");
@@ -78,6 +81,7 @@
         if (j === i) img.loading = "eager";
         img.classList.toggle("is-on", j === i);
       });
+      shots.scrollLeft = 0;
       shots.setAttribute("aria-labelledby", btn.id);
     });
   }
@@ -150,6 +154,10 @@
         b.tabIndex = j === i ? 0 : -1;
       });
       if (focus) btns[i].focus();
+      if (fonts.scrollWidth > fonts.clientWidth) {
+        const b = btns[i], left = b.offsetLeft - fonts.offsetLeft;
+        if (left < fonts.scrollLeft || left + b.offsetWidth > fonts.scrollLeft + fonts.clientWidth) fonts.scrollTo({ left: left - 20, behavior: reduce ? "auto" : "smooth" });
+      }
       renderCode();
     };
     btns.forEach((b, i) => {
