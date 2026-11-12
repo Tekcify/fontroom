@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appdever01/fontroom.git"
+    "url": "https://github.com/Tekcify/fontroom.git"
   },
   "engines": {
     "node": ">=20"

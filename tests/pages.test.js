@@ -10,7 +10,7 @@ test("landing page links into the tool and the primitives", async () => {
   const hrefs = p.$$("a").map(a => a.getAttribute("href"));
   assert.ok(hrefs.includes("app.html"));
   assert.ok(hrefs.includes("primitives.html"));
-  assert.ok(hrefs.includes("https://github.com/appdever01/fontroom"));
+  assert.ok(hrefs.includes("https://github.com/Tekcify/fontroom"));
   assert.equal(p.$$("select").length, 0);
   assert.deepEqual(p.errors, []);
   p.w.close();

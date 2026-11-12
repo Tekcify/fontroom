@@ -5,7 +5,7 @@ Thanks for wanting to help. Fontroom is plain HTML, CSS and JavaScript with no b
 ## Setup
 
 ```bash
-git clone https://github.com/appdever01/fontroom.git
+git clone https://github.com/Tekcify/fontroom.git
 cd fontroom
 npm install
 npm run dev

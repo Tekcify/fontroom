@@ -50,7 +50,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 Fontroom is plain HTML, CSS and JavaScript. There is no build step.
 
 ```bash
-git clone https://github.com/appdever01/fontroom.git
+git clone https://github.com/Tekcify/fontroom.git
 cd fontroom
 npm install
 npm run dev
