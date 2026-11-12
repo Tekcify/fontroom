@@ -13,6 +13,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 ## Features
 
 - **Live preview on real layouts.** A website and a mobile app side by side, in four styles: a SaaS product, a café, a magazine and a developer docs site.
+- **Any website.** Pick "Your website" under Site and paste a link. Fontroom loads the real page, desktop and mobile, with your fonts on it. Click links inside it to move around, or paste a new link at any time.
 - **Hover to try, click to keep.** Hover any font in the list, or use the arrow keys, to preview it instantly. Press Enter or click to keep it.
 - **180 curated Google Fonts, plus the rest.** Filter by style, or type the exact name of any family on Google Fonts and load it.
 - **Your own font files.** Drop a `.woff2`, `.woff`, `.ttf` or `.otf` onto the page to test a brand or paid font. Fontroom reads the file in your browser and never uploads it. It detects variable fonts and the weight of static ones.
@@ -42,6 +43,7 @@ Google Fonts shows you one sample sentence. Fontroom puts the font on a full lan
 | `D` | Light or dark preview |
 | `1` `2` `3` | Show both, website or app |
 | `U` | Try your own font file |
+| `L` | Try fonts on any website |
 | `C` | Get the code |
 | `?` | Show all shortcuts |
 
@@ -56,7 +58,7 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:4815. Any static server pointed at `public/` works too.
+Then open http://localhost:4815. The dev server also runs the website preview endpoint. Any static server pointed at `public/` works for everything else.
 
 ## Tests
 
@@ -65,7 +67,7 @@ npm run check
 npm test
 ```
 
-The tests use Node's built-in test runner and jsdom. They cover the font catalogue, weight detection, font file parsing, code generation for every platform, and the main flows in the app: search and preview, templates, share links, saved pairings, custom colours, keyboard shortcuts and own font files.
+The tests use Node's built-in test runner and jsdom. They cover the font catalogue, weight detection, font file parsing, code generation for every platform, and the main flows in the app: search and preview, templates, share links, saved pairings, custom colours, keyboard shortcuts, own font files and the website preview, including its proxy and address checks.
 
 ## Project structure
 
@@ -85,6 +87,9 @@ public/
   js/threads.js     Animated background, ported from React Bits
   img/              Landing page screenshots
   fonts/            Aspekta and Bricolage Grotesque
+lib/preview.js      Website preview: fetches a page and adds the font script
+api/preview.js      Vercel function for the website preview
+scripts/dev.js      Local server for the site and the preview endpoint
 tests/              Node tests
 docs/               README images
 ```
@@ -95,7 +100,9 @@ Fontroom started as a demo for a talk on cleaning up AI-generated websites. `pub
 
 ## Deploy
 
-The repository deploys to Vercel as a static site with no build command. `vercel.json` serves `public/` with clean URLs.
+The repository deploys to Vercel with no build command. `vercel.json` serves `public/` with clean URLs, and `api/preview.js` runs as a serverless function.
+
+The website preview fetches pages on the server, so it only accepts public http and https addresses. It refuses local and private networks, custom ports and non-HTML files, and shows the result in a sandboxed frame with no access to Fontroom’s storage.
 
 ```bash
 vercel deploy --prod

@@ -118,7 +118,7 @@
       <input type="file" id="fontFile" accept=".woff2,.woff,.ttf,.otf" hidden>
     </div>
 
-    <p class="side-foot">Click any text in the preview to rewrite it. Fonts load live from Google Fonts. Your own font files stay on this device. <a href="https://github.com/Tekcify/fontroom">Source on GitHub</a></p>
+    <p class="side-foot">Click any text in the preview to rewrite it, or pick “Your website” under Site to try fonts on any link. Fonts load live from Google Fonts. Your own font files stay on this device. <a href="https://github.com/Tekcify/fontroom">Source on GitHub</a></p>
   </aside>
 
   <main class="main">
@@ -133,6 +133,15 @@
       <button type="button" class="btn" id="shareBtn" aria-label="Copy link" title="Copy a link to this setup"><svg class="ic sm"><use href="#i-link"/></svg><span class="lbl">Copy link</span></button>
       <button type="button" class="btn primary" id="codeBtn"><svg class="ic sm"><use href="#i-code"/></svg>Get code</button>
     </div>
+    <form class="urlbar" id="urlBar" hidden>
+      <button type="button" class="icon-btn" id="urlBack" aria-label="Back to the previous page" title="Back" hidden><svg class="ic"><use href="#i-back"/></svg></button>
+      <label class="urlfield">
+        <svg class="ic sm"><use href="#i-link"/></svg>
+        <span class="sr">Website address</span>
+        <input id="urlInput" type="text" inputmode="url" enterkeyhint="go" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste a link to any website, like linear.app">
+      </label>
+      <button type="submit" class="btn primary" id="urlGo">Preview</button>
+    </form>
     <div class="stage-wrap" id="stageWrap">
       <div class="stage" id="stage">
         <div class="site-col">
@@ -140,11 +149,12 @@
           <div class="browser" id="browser">
             <div class="browser-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><div class="url"><svg class="ic sm"><use href="#i-lock"/></svg><span id="domain"></span></div><span class="dots-spacer"></span></div>
             <div class="mock site" id="site"></div>
+            <div class="live" id="siteLive" hidden><iframe id="siteFrame" title="Website preview" sandbox="allow-scripts" referrerpolicy="no-referrer" hidden></iframe><p class="live-msg" id="siteMsg"></p></div>
           </div>
         </div>
         <div class="phone-col">
-          <div class="col-label"><b>Mobile app</b><span id="phoneWidth"></span><span class="scale">Actual size</span></div>
-          <div class="phone"><div class="mock screen" id="screen"></div></div>
+          <div class="col-label"><b id="phoneLabel">Mobile app</b><span id="phoneWidth"></span><span class="scale">Actual size</span></div>
+          <div class="phone"><div class="mock screen" id="screen"></div><div class="live screen-live" id="phoneLive" hidden><iframe id="phoneFrame" title="Mobile preview" sandbox="allow-scripts" referrerpolicy="no-referrer" hidden></iframe><p class="live-msg" id="phoneMsg"></p></div></div>
         </div>
       </div>
     </div>
@@ -176,6 +186,7 @@
     <div><dt><kbd>D</kbd></dt><dd>Switch light and dark preview</dd></div>
     <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>Show both, website or app</dd></div>
     <div><dt><kbd>U</kbd></dt><dd>Try your own font file</dd></div>
+    <div><dt><kbd>L</kbd></dt><dd>Try fonts on any website</dd></div>
     <div><dt><kbd>C</kbd></dt><dd>Get the code</dd></div>
     <div><dt><kbd>?</kbd></dt><dd>Show this list</dd></div>
   </dl>

@@ -7,7 +7,10 @@
   const SIZES = { 15: "15 px", 16: "16 px", 17: "17 px", 18: "18 px" };
   const VIEWS = [{ v: "both", label: "Both", icon: "split" }, { v: "site", label: "Website", icon: "monitor" }, { v: "app", label: "App", icon: "phone" }];
 
-  const state = { heading: "Fraunces", body: "Inter", slot: "heading", view: "both", template: "startup", weight: 700, size: 16, theme: "light", accent: null, cat: "all", query: "" };
+  const state = { heading: "Fraunces", body: "Inter", slot: "heading", view: "both", template: "startup", weight: 700, size: 16, theme: "light", accent: null, cat: "all", query: "", url: "" };
+  const LIVE = "url";
+  const isLive = () => state.template === LIVE;
+  const tplOf = () => TEMPLATES[state.template] || TEMPLATES.startup;
   let preview = null;
   let previewTimer = 0;
   let activeIndex = -1;
@@ -83,6 +86,7 @@
             const css = await r.text();
             injectCss(css);
             rec.weights = parseWeights(css);
+            rec.url = url;
             rec.status = "ok";
             return rec;
           } catch (e) { useFetch = false; networkFailed = true; }
@@ -90,6 +94,7 @@
         const linked = await linkLoad(url);
         if (linked) {
           rec.weights = /font-weight/.test(linked.css) ? parseWeights(linked.css) : weightsFromQuery(t);
+          rec.url = url;
           rec.status = "ok";
           return rec;
         }
@@ -129,7 +134,7 @@
     stage.style.setProperty("--fb", stack(b));
     stage.style.setProperty("--hw", effWeight(h));
     stage.style.setProperty("--bs", state.size + "px");
-    const acc = state.accent || TEMPLATES[state.template].accent;
+    const acc = state.accent || tplOf().accent;
     if (acc === "ink") {
       stage.style.setProperty("--acc", "var(--m-fg)");
       stage.style.setProperty("--on-acc", "var(--m-bg)");
@@ -138,6 +143,7 @@
       stage.style.setProperty("--on-acc", onAccent(acc));
     }
     stage.dataset.theme = state.theme;
+    sendFontsAll();
   }
 
   function onAccent(hex) {
@@ -349,11 +355,15 @@
 
   const tplDD = dropdown($("#tplDD"), {
     label: "Site",
-    options: () => Object.entries(TEMPLATES).map(([k, t]) => ({ value: k, label: t.label, sub: t.sub })),
+    options: () => [{ value: LIVE, label: "Your website", sub: "Any link" }, ...Object.entries(TEMPLATES).map(([k, t]) => ({ value: k, label: t.label, sub: t.sub }))],
     get: () => state.template,
-    set: v => { state.template = v; state.accent = null; renderMocks(); applyFonts(); updateSwatches(); syncHash(); },
-    display: v => TEMPLATES[v].label
+    set: v => { setTemplate(v); if (v === LIVE && !state.url) setTimeout(() => urlInput.focus(), 0); },
+    display: v => (v === LIVE ? "Your website" : TEMPLATES[v].label)
   });
+  function setTemplate(v) {
+    state.template = v; state.accent = null;
+    renderMocks(); applyFonts(); updateSwatches(); layoutStage(); syncHash();
+  }
   const weightDD = dropdown($("#weightDD"), {
     label: "Weight",
     options: () => {
@@ -377,7 +387,7 @@
     it => `<button type="button" role="radio" data-v="${it.v}"><svg class="ic sm"><use href="#i-${it.icon}"/></svg>${it.label}</button>`);
   const updateCats = radioGroup($("#cats"), CATS.map(c => ({ v: c.id, label: c.label })), () => state.cat, v => { state.cat = v; renderList(); },
     it => `<button type="button" class="chip" role="radio" data-v="${it.v}">${it.label}</button>`);
-  const updateSwatchRadios = radioGroup($("#swatches"), ACCENTS, () => state.accent || TEMPLATES[state.template].accent, v => { state.accent = v; applyFonts(); syncHash(); renderPick(); },
+  const updateSwatchRadios = radioGroup($("#swatches"), ACCENTS, () => state.accent || tplOf().accent, v => { state.accent = v; applyFonts(); syncHash(); renderPick(); },
     it => `<button type="button" class="sw" role="radio" data-v="${it.v}" style="--c:${it.v}" aria-label="${it.label}" title="${it.label}"></button>`);
   const pick = $("#accentPick"), pickWrap = $("#pickWrap");
   const isCustomAccent = () => !!state.accent && !ACCENTS.some(a => a.v === state.accent);
@@ -385,7 +395,7 @@
     const on = isCustomAccent();
     pickWrap.classList.toggle("on", on);
     pickWrap.style.setProperty("--c", on ? state.accent : "transparent");
-    const cur = state.accent || TEMPLATES[state.template].accent;
+    const cur = state.accent || tplOf().accent;
     pick.value = /^#[0-9a-f]{6}$/i.test(cur) ? cur : "#3b5bdb";
     pickWrap.title = on ? `Custom colour ${state.accent}` : "Custom colour";
   }
@@ -416,7 +426,103 @@
   }
   $("#themeBtn").addEventListener("click", () => { state.theme = state.theme === "dark" ? "light" : "dark"; renderTheme(); applyFonts(); syncHash(); });
 
+  const urlInput = $("#urlInput");
+  const frames = [
+    { el: $("#siteFrame"), msg: $("#siteMsg"), mobile: false, ready: false, sent: new Set() },
+    { el: $("#phoneFrame"), msg: $("#phoneMsg"), mobile: true, ready: false, sent: new Set() }
+  ];
+  const liveBack = [];
+  const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return String(u); } };
+
+  function fontSpec(f, n) {
+    const o = { family: n, stack: stack(n) };
+    const l = local.get(n);
+    if (l) {
+      if (l.buf && !f.sent.has(n)) { o.file = { data: l.buf, weight: l.descriptor }; f.sent.add(n); }
+    } else {
+      const r = info.get(n);
+      if (r && r.url) o.url = r.url;
+    }
+    return o;
+  }
+  function sendFonts(f) {
+    if (!isLive() || !f.ready || !f.el.contentWindow) return;
+    const h = effective("heading"), b = effective("body");
+    try { f.el.contentWindow.postMessage({ fontroom: 1, type: "fonts", heading: fontSpec(f, h), body: fontSpec(f, b), weight: effWeight(h) }, "*"); } catch (e) { /* frame gone */ }
+  }
+  function sendFontsAll() { frames.forEach(sendFonts); }
+
+  function setMsg(f, text, loading) {
+    f.msg.hidden = !text;
+    f.msg.innerHTML = text ? (loading ? '<span class="loading-dot"></span>' : "") + esc(text) : "";
+  }
+  function unloadFrames() {
+    frames.forEach(f => { f.ready = false; f.sent.clear(); if (f.el.getAttribute("src") && f.el.getAttribute("src") !== "about:blank") f.el.src = "about:blank"; });
+  }
+  function renderLive() {
+    const url = state.url;
+    $("#domain").textContent = url ? hostOf(url) : "your-website.com";
+    if (document.activeElement !== urlInput) urlInput.value = url;
+    $("#urlBack").hidden = !liveBack.length;
+    frames.forEach(f => {
+      if (!url) {
+        f.el.hidden = true;
+        setMsg(f, f.mobile ? "The mobile version shows here." : "Paste a link above to see your fonts on a real website.");
+        return;
+      }
+      const src = `api/preview?url=${encodeURIComponent(url)}${f.mobile ? "&ua=mobile" : ""}`;
+      f.el.hidden = false;
+      if (f.el.getAttribute("src") === src) return;
+      f.ready = false; f.sent.clear();
+      setMsg(f, `Loading ${hostOf(url)}`, true);
+      f.el.src = src;
+    });
+  }
+  function openUrl(raw) {
+    const url = normalizeSiteUrl(raw);
+    if (!url) { toast("That doesn't look like a web address. Try something like stripe.com.", "err", "live"); return false; }
+    if (state.url && state.url !== url) { liveBack.push(state.url); if (liveBack.length > 30) liveBack.shift(); }
+    state.url = url;
+    urlInput.value = url;
+    renderLive(); syncHash();
+    return true;
+  }
+  frames.forEach(f => f.el.addEventListener("load", () => {
+    const src = f.el.getAttribute("src");
+    if (src && src !== "about:blank") setMsg(f, "");
+  }));
+  window.addEventListener("message", e => {
+    const f = frames.find(x => x.el.contentWindow && x.el.contentWindow === e.source);
+    const d = e.data;
+    if (!f || !d || d.fontroom !== 1 || !isLive()) return;
+    if (d.type === "ready") { f.ready = true; setMsg(f, ""); sendFonts(f); }
+    else if (d.type === "navigate" && typeof d.url === "string") openUrl(d.url);
+    else if (d.type === "error") { setMsg(f, ""); toast(String(d.message || "This page couldn't be loaded.").slice(0, 220), "err", "live"); }
+  });
+  $("#urlBar").addEventListener("submit", e => {
+    e.preventDefault();
+    if (urlInput.value.trim()) openUrl(urlInput.value);
+    else { toast("Paste a link first, like linear.app.", "err", "live"); urlInput.focus(); }
+  });
+  urlInput.addEventListener("paste", () => setTimeout(() => { if (normalizeSiteUrl(urlInput.value)) openUrl(urlInput.value); }, 0));
+  urlInput.addEventListener("keydown", e => { if (e.key === "Escape" && urlInput.value !== state.url) { e.preventDefault(); urlInput.value = state.url; } });
+  $("#urlBack").addEventListener("click", () => {
+    const prev = liveBack.pop();
+    if (!prev) return;
+    state.url = prev; urlInput.value = prev;
+    renderLive(); syncHash();
+    if (!liveBack.length) urlInput.focus();
+  });
+
   function renderMocks() {
+    const live = isLive();
+    $(".app").classList.toggle("is-live", live);
+    $("#urlBar").hidden = !live;
+    $("#site").hidden = live; $("#screen").hidden = live;
+    $("#siteLive").hidden = !live; $("#phoneLive").hidden = !live;
+    $("#phoneLabel").textContent = live ? "Mobile" : "Mobile app";
+    if (live) { renderLive(); tplDD.update(); return; }
+    unloadFrames();
     const t = TEMPLATES[state.template];
     const site = $("#site"), screen = $("#screen");
     site.dataset.t = state.template; screen.dataset.t = state.template;
@@ -431,6 +537,7 @@
 
   function layoutStage() {
     const browser = $("#browser");
+    const live = isLive();
     const w = $("#stageWrap").clientWidth - (window.innerWidth <= 520 ? 32 : 56);
     let stacked = false, siteW = w;
     if (state.view === "both") {
@@ -440,16 +547,27 @@
     stage.classList.toggle("stacked", stacked);
     let zoom = 1, logical = 0;
     if (state.view === "both" && !stacked && siteW < 1040) { logical = 1200; zoom = siteW / 1200; }
-    browser.style.width = logical ? logical + "px" : "";
-    browser.style.zoom = zoom === 1 ? "" : zoom.toFixed(4);
+    if (live) {
+      const frame = $("#siteFrame");
+      const visH = Math.round(Math.min(900, Math.max(480, (window.innerHeight || 900) - 190)));
+      browser.style.width = ""; browser.style.zoom = "";
+      $("#siteLive").style.height = visH + "px";
+      frame.style.width = logical ? logical + "px" : "";
+      frame.style.height = logical ? Math.round(visH / zoom) + "px" : "";
+      frame.style.transform = logical ? `scale(${zoom.toFixed(4)})` : "";
+    } else {
+      browser.style.width = logical ? logical + "px" : "";
+      browser.style.zoom = zoom === 1 ? "" : zoom.toFixed(4);
+    }
     const shown = state.view === "site" ? Math.min(siteW, 1440) : siteW;
     $("#siteWidth").textContent = logical ? `${logical} px wide` : `${Math.round(shown)} px wide`;
     $("#siteScale").textContent = logical ? `Scaled to ${Math.round(zoom * 100)}% to fit` : "Actual size";
-    $("#phoneWidth").textContent = `${$("#screen").offsetWidth} px wide`;
+    $("#phoneWidth").textContent = `${(live ? $("#phoneLive") : $("#screen")).offsetWidth} px wide`;
   }
   const ro = new ResizeObserver(layoutStage);
   ro.observe($("#stageWrap"));
   ro.observe($("#screen"));
+  ro.observe($("#phoneLive"));
   window.addEventListener("resize", layoutStage);
 
   let codeTab = "css";
@@ -628,7 +746,7 @@
     const old = local.get(name);
     if (old && old.face) document.fonts.delete(old.face);
     document.fonts.add(face);
-    local.set(name, { file: file.name, format: meta.format || FONT_FILE_EXT[ext], variable: meta.variable, weight: meta.weight, face });
+    local.set(name, { file: file.name, format: meta.format || FONT_FILE_EXT[ext], variable: meta.variable, weight: meta.weight, face, buf, descriptor });
     custom.set(name, { name, cat: "local" });
     const weights = meta.variable ? ALL_WEIGHTS.slice() : [meta.weight ? nearestWeight(ALL_WEIGHTS, meta.weight) : 400];
     const rec = { status: "ok", weights, reason: "" };
@@ -699,6 +817,7 @@
       d: () => $("#themeBtn").click(),
       c: () => $("#codeBtn").click(),
       u: () => $("#fontFile").click(),
+      l: () => { if (!isLive()) setTemplate(LIVE); urlInput.focus(); urlInput.select(); },
       h: () => selectSlot("heading"),
       b: () => selectSlot("body"),
       1: () => setView("both"),
@@ -713,7 +832,9 @@
     const p = new URLSearchParams();
     if (!local.has(state.heading)) p.set("h", state.heading);
     if (!local.has(state.body)) p.set("b", state.body);
-    p.set("site", state.template); p.set("view", state.view);
+    p.set("site", state.template);
+    if (isLive() && state.url) p.set("url", state.url);
+    p.set("view", state.view);
     p.set("w", state.weight); p.set("size", state.size); p.set("theme", state.theme);
     if (state.accent) p.set("accent", state.accent.replace("#", ""));
     history.replaceState(null, "", "#" + p.toString());
@@ -724,7 +845,9 @@
     const h = p.get("h"), b = p.get("b");
     if (h) { state.heading = canonical(h); if (!BY_NAME.has(h.toLowerCase())) custom.set(h, { name: h, cat: "custom" }); }
     if (b) { state.body = canonical(b); if (!BY_NAME.has(b.toLowerCase())) custom.set(b, { name: b, cat: "custom" }); }
-    if (TEMPLATES[p.get("site")]) state.template = p.get("site");
+    if (TEMPLATES[p.get("site")] || p.get("site") === LIVE) state.template = p.get("site");
+    const u = normalizeSiteUrl(p.get("url"));
+    if (u) state.url = u;
     if (VIEWS.some(v => v.v === p.get("view"))) state.view = p.get("view");
     if (ALL_WEIGHTS.includes(+p.get("w"))) state.weight = +p.get("w");
     if (SIZES[p.get("size")]) state.size = +p.get("size");

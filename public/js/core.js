@@ -286,6 +286,17 @@ function parseFontFile(buf) {
   return out;
 }
 
+function normalizeSiteUrl(raw) {
+  let s = String(raw || "").trim();
+  if (!s || s.length > 2048) return null;
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s.replace(/^\/+/, "");
+  let u;
+  try { u = new URL(s); } catch (e) { return null; }
+  if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+  if (!u.hostname.includes(".") && !u.hostname.startsWith("[")) return null;
+  return u.href;
+}
+
 function familyFromFile(fileName) {
   const base = fileName.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\s+(VF|Variable)$/i, "").replace(/\s+/g, " ").trim();
   return base || "My font";

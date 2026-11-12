@@ -42,7 +42,7 @@ test("search, preview, keep, weights, templates and code", async () => {
   assert.equal($(".slot[data-slot=heading] .slot-name").textContent, "Instrument Serif");
 
   $("#tplDD .dd-btn").click();
-  assert.equal($$("#tplDD .dd-opt").length, 4);
+  assert.equal($$("#tplDD .dd-opt").length, 5);
   key($("#tplDD .dd-pop"), "End"); key($("#tplDD .dd-pop"), "Enter");
   assert.match($("#site").innerHTML, /Send your first event/);
   assert.match($("#screen").innerHTML, /Deliveries/);
@@ -203,5 +203,113 @@ test("own font file: drop, preview, code and limits", async () => {
   $("#saveBtn").click();
   assert.match($("#toasts").textContent, /can't be saved/);
   assert.equal($("#savedCount").textContent, "");
+  assert.deepEqual(p.errors, []);
+});
+
+test("any website: paste a link, fonts follow, links and back stay in the preview", async () => {
+  const p = openPage("app.html");
+  await p.tick(250);
+  const { $, $$, w, d, key, type } = p;
+  const site = $("#siteFrame"), phone = $("#phoneFrame");
+  const sent = { site: [], phone: [] };
+  const spy = () => {
+    site.contentWindow.postMessage = m => sent.site.push(m);
+    phone.contentWindow.postMessage = m => sent.phone.push(m);
+  };
+  const fromFrame = (frame, data) => w.dispatchEvent(new w.MessageEvent("message", { data: { fontroom: 1, ...data }, source: frame.contentWindow }));
+
+  $("#tplDD .dd-btn").click();
+  const first = $$("#tplDD .dd-opt")[0];
+  assert.match(first.textContent, /Your website/);
+  first.click();
+  await p.tick(20);
+  assert.equal($("#tplDD .dd-v").textContent, "Your website");
+  assert.ok(!$("#urlBar").hidden);
+  assert.ok($(".app").classList.contains("is-live"), "theme, accent and size controls step aside");
+  assert.ok($("#site").hidden && $("#screen").hidden);
+  assert.ok(!$("#siteLive").hidden && !$("#phoneLive").hidden);
+  assert.equal(d.activeElement, $("#urlInput"));
+  assert.match($("#siteMsg").textContent, /Paste a link/);
+  assert.equal(site.getAttribute("src"), null);
+  assert.equal($("#phoneLabel").textContent, "Mobile");
+
+  $("#urlBar").requestSubmit();
+  assert.match($("#toasts").textContent, /Paste a link first/);
+  type($("#urlInput"), "hello");
+  $("#urlBar").requestSubmit();
+  assert.match($("#toasts").textContent, /doesn't look like a web address/);
+
+  type($("#urlInput"), "linear.app");
+  $("#urlBar").requestSubmit();
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2F");
+  assert.equal(phone.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2F&ua=mobile");
+  assert.equal($("#domain").textContent, "linear.app");
+  assert.match($("#siteMsg").textContent, /Loading linear\.app/);
+  assert.match(w.location.hash, /site=url&url=https%3A%2F%2Flinear\.app%2F/);
+
+  spy();
+  fromFrame(site, { type: "ready", url: "https://linear.app/" });
+  assert.ok($("#siteMsg").hidden);
+  const m = sent.site.at(-1);
+  assert.equal(m.type, "fonts");
+  assert.equal(m.heading.family, "Fraunces");
+  assert.match(m.heading.stack, /"Fraunces", serif/);
+  assert.match(m.heading.url, /^https:\/\/fonts\.googleapis\.com\/css2\?family=Fraunces/);
+  assert.equal(m.body.family, "Inter");
+  assert.equal(m.weight, 700);
+  assert.equal(sent.phone.length, 0, "fonts wait until the phone frame is ready");
+  fromFrame(phone, { type: "ready" });
+  assert.equal(sent.phone.at(-1).body.family, "Inter");
+
+  const q = $("#q");
+  type(q, "playfair"); key(q, "ArrowDown"); await p.tick();
+  assert.equal(sent.site.at(-1).heading.family, "Playfair Display", "hover previews reach the live site");
+  key(q, "Enter"); await p.tick(150);
+  assert.match(sent.phone.at(-1).heading.url || "", /Playfair\+Display/);
+
+  fromFrame(site, { type: "navigate", url: "https://linear.app/pricing" });
+  assert.equal($("#urlInput").value, "https://linear.app/pricing");
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2Fpricing");
+  assert.equal(phone.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2Fpricing&ua=mobile");
+  assert.ok(!$("#urlBack").hidden);
+  w.dispatchEvent(new w.MessageEvent("message", { data: { fontroom: 1, type: "navigate", url: "https://evil.example/" }, source: w }));
+  assert.equal($("#urlInput").value, "https://linear.app/pricing", "messages from other windows are ignored");
+  $("#urlBack").click();
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Flinear.app%2F");
+  assert.ok($("#urlBack").hidden);
+
+  fromFrame(site, { type: "error", message: "We couldn't find linear.appp. Check the spelling of the address." });
+  assert.match($("#toasts").textContent, /couldn't find linear\.appp/);
+
+  $("#urlInput").value = "stripe.com/pricing";
+  $("#urlInput").dispatchEvent(new w.Event("paste", { bubbles: true }));
+  await p.tick(10);
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Fstripe.com%2Fpricing", "pasting a link loads it straight away");
+
+  $("#tplDD .dd-btn").click();
+  $$("#tplDD .dd-opt")[1].click();
+  assert.ok($("#urlBar").hidden);
+  assert.ok(!$(".app").classList.contains("is-live"));
+  assert.equal(site.getAttribute("src"), "about:blank", "the site stops running when you leave it");
+  assert.doesNotMatch(w.location.hash, /url=/);
+  spy();
+  const before = sent.site.length;
+  fromFrame(site, { type: "ready" });
+  assert.equal(sent.site.length, before);
+  key(d.body, "l");
+  assert.equal($("#tplDD .dd-v").textContent, "Your website");
+  assert.equal(d.activeElement, $("#urlInput"));
+  assert.equal(site.getAttribute("src"), "api/preview?url=https%3A%2F%2Fstripe.com%2Fpricing");
+  assert.deepEqual(p.errors, []);
+});
+
+test("a shared link opens the same website preview", async () => {
+  const p = openPage("app.html", { hash: "#h=Lora&b=Inter&site=url&url=https%3A%2F%2Fexample.com%2Fblog&view=site" });
+  await p.tick(200);
+  const { $ } = p;
+  assert.equal($("#tplDD .dd-v").textContent, "Your website");
+  assert.equal($("#siteFrame").getAttribute("src"), "api/preview?url=https%3A%2F%2Fexample.com%2Fblog");
+  assert.equal($("#urlInput").value, "https://example.com/blog");
+  assert.equal($("#domain").textContent, "example.com");
   assert.deepEqual(p.errors, []);
 });

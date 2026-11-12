@@ -12,9 +12,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "npx --yes serve@14 public -l 4815",
+    "dev": "node scripts/dev.js",
     "test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
-    "check": "node --check public/js/core.js && node --check public/js/templates.js && node --check public/js/app.js && node --check public/js/home.js && node --check public/js/lightrays.js"
+    "check": "node --check public/js/core.js && node --check public/js/templates.js && node --check public/js/app.js && node --check public/js/home.js && node --check public/js/lightrays.js && node --check lib/preview.js && node --check api/preview.js && node --check scripts/dev.js"
   },
   "devDependencies": {
     "jsdom": "^31.0.0"

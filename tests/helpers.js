@@ -11,7 +11,7 @@ function inlineScripts(html) {
 
 function loadCore() {
   return new Function(`${read("js/core.js")}
-return { FONTS, BY_NAME, PAIRS, CATS, CAT_LABEL, FALLBACK, parseWeights, weightsFromQuery, nearestWeight, bodyWeights, cssUrl, camelName, buildCode, buildLocalCode, parseFontFile, familyFromFile, FONT_FILE_EXT };`)();
+return { FONTS, BY_NAME, PAIRS, CATS, CAT_LABEL, FALLBACK, parseWeights, weightsFromQuery, nearestWeight, bodyWeights, cssUrl, camelName, buildCode, buildLocalCode, parseFontFile, familyFromFile, FONT_FILE_EXT, normalizeSiteUrl };`)();
 }
 
 function fakeGoogleFetch(log) {
