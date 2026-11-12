@@ -20,6 +20,12 @@
   const small = mq("(max-width: 760px)");
   const fine = mq("(pointer: fine)");
 
+  if (!reduce && fine && typeof window.Lenis === "function") {
+    const lenis = new window.Lenis({ autoRaf: true, lerp: 0.1, allowNestedScroll: true, anchors: true });
+    window.lenis = lenis;
+    window.addEventListener("load", () => lenis.resize());
+  }
+
   if (window.LightRays) {
     const base = { color: "#fff4ee", speed: 0.6, density: 1.3, sharpness: 0.55, haze: 0.25, atmosphere: 0.85, saturation: 0.7, maxRatio: small ? 1.25 : 2 };
     const hero = $("heroRays");
@@ -71,22 +77,213 @@
     }
   }
 
-  const flipper = document.querySelector(".flipper");
-  if (flipper && !reduce) {
-    const cards = [...flipper.querySelectorAll(".flip-card")].reverse();
-    const count = flipper.querySelector(".flip-count span");
-    let at = 0, timer = 0, seen = false;
-    const order = () => cards.forEach((c, i) => {
-      const pos = (i - at + cards.length) % cards.length;
-      c.classList.remove("c1", "c2", "c3");
-      c.classList.add("c" + (pos + 1));
+  const toastEl = $("toast");
+  let toastT = 0;
+  const toast = msg => {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toastEl.classList.remove("on"), 3400);
+  };
+  const watch = (el, cb) => {
+    if (typeof IntersectionObserver === "function") new IntersectionObserver(en => cb(en.some(x => x.isIntersecting))).observe(el);
+  };
+  const autoplay = (el, ms, tick) => {
+    let seen = false, timer = 0, off = reduce;
+    const run = () => { clearInterval(timer); timer = !off && seen && !document.hidden ? setInterval(tick, ms) : 0; };
+    watch(el, s => { seen = s; run(); });
+    document.addEventListener("visibilitychange", run);
+    return { stop: () => { off = true; run(); }, seen: () => seen };
+  };
+
+  if (fine) document.querySelectorAll(".bento .cell").forEach(cell => {
+    cell.addEventListener("pointermove", e => {
+      const r = cell.getBoundingClientRect();
+      cell.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      cell.style.setProperty("--my", `${e.clientY - r.top}px`);
+      cell.classList.add("lit");
     });
-    const step = () => { at = (at + 1) % cards.length; order(); if (count) count.textContent = `${at + 1} of ${cards.length}`; };
-    const run = on => { clearInterval(timer); timer = on ? setInterval(step, 2600) : 0; };
-    if (typeof IntersectionObserver === "function") {
-      new IntersectionObserver(entries => { seen = entries.some(en => en.isIntersecting); run(seen && !document.hidden); }).observe(flipper);
-      document.addEventListener("visibilitychange", () => run(seen && !document.hidden));
-    }
+    cell.addEventListener("pointerleave", () => cell.classList.remove("lit"));
+  });
+
+  const dropCell = document.querySelector(".cell-drop"), drop = $("drop"), dropInput = $("dropInput");
+  if (dropCell && drop && dropInput) {
+    const done = $("dropDone");
+    let loaded = 0, depth = 0;
+    const kb = n => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+    const load = async file => {
+      if (!file) return;
+      if (!/\.(woff2?|ttf|otf)$/i.test(file.name)) { toast("That isn't a font file. Try a .woff2, .woff, .ttf or .otf."); return; }
+      if (file.size > 20 * 1048576) { toast("That file is over 20 MB. Try a smaller font file."); return; }
+      try {
+        if (typeof FontFace !== "function" || !document.fonts) throw new Error("unsupported");
+        const family = `Dropped font ${++loaded}`;
+        const face = new FontFace(family, await file.arrayBuffer());
+        await face.load();
+        document.fonts.add(face);
+        const stack = `"${family}", ${FALLBACK.sans}`;
+        $("dropAa").style.fontFamily = stack;
+        $("dropGlyphs").style.fontFamily = stack;
+        $("dropName").textContent = file.name;
+        $("dropSize").textContent = kb(file.size);
+        done.hidden = true;
+        void done.offsetWidth;
+        done.hidden = false;
+        drop.classList.add("has");
+      } catch {
+        toast("Couldn't read that font. The file may be damaged.");
+      }
+    };
+    const files = e => e.dataTransfer && [...(e.dataTransfer.types || [])].includes("Files");
+    dropCell.addEventListener("dragenter", e => { if (!files(e)) return; e.preventDefault(); depth++; drop.classList.add("over"); });
+    dropCell.addEventListener("dragover", e => { if (!files(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = "copy"; });
+    dropCell.addEventListener("dragleave", () => { depth = Math.max(0, depth - 1); if (!depth) drop.classList.remove("over"); });
+    dropCell.addEventListener("drop", e => {
+      if (!files(e)) return;
+      e.preventDefault();
+      depth = 0;
+      drop.classList.remove("over");
+      load(e.dataTransfer.files[0]);
+    });
+    const pick = () => dropInput.click();
+    $("dropBtn").addEventListener("click", pick);
+    $("dropAgain").addEventListener("click", pick);
+    dropInput.addEventListener("change", () => { load(dropInput.files[0]); dropInput.value = ""; });
+  }
+
+  const wt = $("wt");
+  if (wt) {
+    const spec = $("wtSpec"), now = $("wtNow");
+    const real = [...wt.querySelectorAll('[role="radio"]')];
+    let cur = Math.max(0, real.findIndex(b => b.getAttribute("aria-checked") === "true")), dir = 1, missT = 0;
+    const set = (i, focus) => {
+      cur = i;
+      real.forEach((b, j) => { b.setAttribute("aria-checked", String(j === i)); b.tabIndex = j === i ? 0 : -1; });
+      spec.style.fontWeight = real[i].dataset.w;
+      now.textContent = real[i].dataset.w;
+      now.classList.remove("miss");
+      if (focus) real[i].focus();
+    };
+    const play = autoplay(wt, 1400, () => {
+      if (cur + dir < 0 || cur + dir >= real.length) dir = -dir;
+      set(cur + dir);
+    });
+    real.forEach((b, i) => {
+      b.addEventListener("click", () => { play.stop(); set(i); });
+      b.addEventListener("keydown", e => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        const n = step ? (cur + step + real.length) % real.length : e.key === "Home" ? 0 : e.key === "End" ? real.length - 1 : null;
+        if (n === null) return;
+        e.preventDefault();
+        play.stop();
+        set(n, true);
+      });
+    });
+    wt.querySelectorAll(".no").forEach(b => b.addEventListener("click", () => {
+      play.stop();
+      b.classList.remove("shake");
+      void b.offsetWidth;
+      b.classList.add("shake");
+      now.textContent = `No ${b.dataset.w} in this font`;
+      now.classList.add("miss");
+      clearTimeout(missT);
+      missT = setTimeout(() => set(cur), 1600);
+    }));
+    set(cur);
+  }
+
+  const share = $("share");
+  if (share) {
+    const OPTS = {
+      h: [["Syne", "sans-serif", 700], ["Fraunces", "serif", 700], ["Unbounded", "sans-serif", 600], ["Playfair Display", "serif", 700]],
+      accent: [["Red", "ff5a36"], ["Blue", "3b5bdb"], ["Green", "2f7d5b"], ["Gold", "e9c46a"]],
+      theme: [["Dark", "dark"], ["Light", "light"]]
+    };
+    const at = { h: 0, accent: 0, theme: 0 };
+    const head = $("shareH"), link = $("shareUrl"), text = $("shareText"), copy = $("shareCopy");
+    const btns = [...share.querySelectorAll(".share-opts button")];
+    let qs = "", hotT = 0, copyT = 0;
+    const render = hot => {
+      const [name, cat, w] = OPTS.h[at.h];
+      const p = [["h", name], ["b", "Inter"], ["w", String(w)], ["accent", OPTS.accent[at.accent][1]], ["theme", OPTS.theme[at.theme][1]]];
+      qs = new URLSearchParams(p).toString();
+      link.href = `app.html#${qs}`;
+      const hotKeys = hot === "h" ? ["h", "w"] : [hot];
+      text.innerHTML = "fontroom.vercel.app/app#" + qs.split("&").map(kv => {
+        const [k, v] = kv.split("=");
+        return `${k}=<b${hotKeys.includes(k) ? ' class="hot"' : ""}>${esc(v)}</b>`;
+      }).join("&amp;");
+      clearTimeout(hotT);
+      hotT = setTimeout(() => text.querySelectorAll(".hot").forEach(el => el.classList.remove("hot")), 900);
+      head.style.fontFamily = `"${name}", ${cat}`;
+      head.style.fontWeight = w;
+      share.style.setProperty("--sc-acc", `#${OPTS.accent[at.accent][1]}`);
+      share.dataset.theme = OPTS.theme[at.theme][1];
+      btns.forEach(b => { b.querySelector("span").textContent = OPTS[b.dataset.k][at[b.dataset.k]][0]; });
+    };
+    btns.forEach(b => b.addEventListener("click", () => {
+      const k = b.dataset.k;
+      at[k] = (at[k] + 1) % OPTS[k].length;
+      if (k === "h" && !reduce) {
+        head.classList.add("swap");
+        setTimeout(() => { render(k); head.classList.remove("swap"); }, 180);
+      } else render(k);
+    }));
+    copy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(`https://fontroom.vercel.app/app#${qs}`);
+        copy.querySelector("use").setAttribute("href", "#i-check");
+        copy.setAttribute("aria-label", "Link copied");
+        clearTimeout(copyT);
+        copyT = setTimeout(() => {
+          copy.querySelector("use").setAttribute("href", "#i-copy");
+          copy.setAttribute("aria-label", "Copy link");
+        }, 1600);
+      } catch {
+        toast("Couldn't copy the link. Open it and copy it from the address bar.");
+      }
+    });
+    render(null);
+  }
+
+  const flipper = $("flipper");
+  if (flipper) {
+    const cards = [...flipper.querySelectorAll(".flip-card")];
+    const count = $("flipCount"), prev = $("flipPrev"), next = $("flipNext");
+    let at = 0;
+    count.setAttribute("aria-live", "off");
+    const go = dir => {
+      const from = cards[at];
+      at = (at + dir + cards.length) % cards.length;
+      cards.forEach((c, i) => { c.dataset.pos = String((i - at + cards.length) % cards.length); });
+      if (!reduce) {
+        const el = dir > 0 ? from : cards[at], cls = dir > 0 ? "out" : "in";
+        el.classList.remove("out", "in");
+        void el.offsetWidth;
+        el.classList.add(cls);
+        el.addEventListener("animationend", () => el.classList.remove(cls), { once: true });
+      }
+      count.textContent = `${at + 1} of ${cards.length}`;
+    };
+    const play = autoplay(flipper, 2800, () => go(1));
+    const press = (btn, dir) => {
+      play.stop();
+      count.setAttribute("aria-live", "polite");
+      const k = btn.querySelector("kbd");
+      k.classList.add("press");
+      setTimeout(() => k.classList.remove("press"), 140);
+      go(dir);
+    };
+    prev.addEventListener("click", () => press(prev, -1));
+    next.addEventListener("click", () => press(next, 1));
+    document.addEventListener("keydown", e => {
+      if ((e.key !== "[" && e.key !== "]") || e.metaKey || e.ctrlKey || e.altKey || !play.seen()) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      e.preventDefault();
+      press(e.key === "[" ? prev : next, e.key === "[" ? -1 : 1);
+    });
   }
 
   function tabs(list, onSelect) {

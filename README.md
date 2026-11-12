@@ -85,6 +85,7 @@ public/
   js/app.js         UI and state
   js/home.js        Landing page: font picker, site templates, live code, screenshot tabs
   js/lightrays.js   Light Rays background, ported from React Bits
+  js/lenis.js       Lenis smooth scrolling for the landing page
   img/              Landing page screenshots
   fonts/            Onest, the interface font
 lib/preview.js      Website preview: fetches a page and adds the font script
@@ -116,9 +117,10 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 - Fonts in the preview are served by [Google Fonts](https://fonts.google.com).
 - The interface is set in [Onest](https://github.com/googlefonts/onest), under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL-Onest.txt`.
-- Icons come from [Hugeicons](https://hugeicons.com) (the free stroke set, MIT, license in `licenses/hugeicons-LICENSE.md`), inlined as SVG symbols. The three step icons on the landing page are drawn for Fontroom.
+- Icons come from [Hugeicons](https://hugeicons.com) (the free stroke set, MIT, license in `licenses/hugeicons-LICENSE.md`), inlined as SVG symbols. The three step icons on the landing page come from the free [Nucleo](https://nucleoapp.com) Glass set and keep Nucleo's license (see `licenses/nucleo-glass.md`).
+- Smooth scrolling on the landing page uses [Lenis](https://github.com/darkroomengineering/lenis) 1.3.27 by darkroom.engineering, MIT, license in `public/js/lenis.LICENSE.md`.
 - The landing page background is a plain JavaScript port of [Light Rays](https://reactbits.dev) from React Bits by David Haz. It keeps its own license (MIT with the Commons Clause), in `public/js/lightrays.LICENSE.md`, and is not covered by Fontroom's MIT license.
 
 ## License
 
-[MIT](LICENSE), except `public/js/lightrays.js` and the bundled font, which keep their own licenses listed above.
+[MIT](LICENSE), except `public/js/lightrays.js`, the Nucleo step icons and the bundled font, which keep their own licenses listed above.

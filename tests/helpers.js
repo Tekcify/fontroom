@@ -25,7 +25,7 @@ function fakeGoogleFetch(log) {
   };
 }
 
-function openPage(rel, { hash = "", fetchLog = [], storage, media } = {}) {
+function openPage(rel, { hash = "", fetchLog = [], storage, media, visible = false } = {}) {
   const html = inlineScripts(read(rel));
   const errors = [];
   const dom = new JSDOM(html, {
@@ -33,7 +33,9 @@ function openPage(rel, { hash = "", fetchLog = [], storage, media } = {}) {
     pretendToBeVisual: true,
     url: `https://fontroom.test/${rel}${hash}`,
     beforeParse(w) {
-      w.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} };
+      w.IntersectionObserver = visible
+        ? class { constructor(cb) { this.cb = cb; } observe(el) { this.cb([{ isIntersecting: true, target: el }]); } unobserve() {} disconnect() {} }
+        : class { observe() {} unobserve() {} disconnect() {} };
       w.ResizeObserver = class { observe() {} disconnect() {} };
       if (media) w.matchMedia = q => ({ media: q, matches: media(q), addEventListener() {}, removeEventListener() {} });
       w.Element.prototype.scrollIntoView = function () {};

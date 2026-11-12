@@ -169,6 +169,165 @@ test("landing font list pins on scroll and steps through every font before letti
   p.w.close();
 });
 
+test("how it works steps use Nucleo glass icons in the brand colour", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $$, d } = p;
+  const icons = $$(".steps .step-ic svg");
+  assert.equal(icons.length, 3);
+  assert.equal($$(".step-n").length, 0);
+  icons.forEach(svg => {
+    assert.ok(svg.querySelector("linearGradient"));
+    assert.ok(svg.querySelector("feGaussianBlur"));
+    svg.querySelectorAll("*").forEach(el => {
+      ["fill", "mask", "filter", "clip-path"].forEach(a => {
+        const v = el.getAttribute(a);
+        if (v && v.startsWith("url(#")) assert.ok(d.getElementById(v.slice(5, -1)), `${v} resolves`);
+      });
+    });
+  });
+  const ids = $$("[id]").map(el => el.id);
+  assert.equal(new Set(ids).size, ids.length, "no duplicate ids on the page");
+  assert.match(read("css/home.css"), /\.step-ic\{[^}]*--nc-gradient-1-color-1:#ff7a52/);
+  assert.ok($$(".foot a").some(a => a.getAttribute("href") === "https://nucleoapp.com"));
+  p.w.close();
+});
+
+test("bento font drop reads the file locally and rejects other files", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, w } = p;
+  const input = $("#dropInput");
+  const pickFile = async file => {
+    Object.defineProperty(input, "files", { value: [file], configurable: true });
+    input.dispatchEvent(new w.Event("change"));
+    await p.tick(30);
+  };
+  assert.ok($("#dropDone").hidden);
+  await pickFile(new w.File(["hello"], "notes.txt"));
+  assert.ok($("#dropDone").hidden);
+  assert.match($("#toast").textContent, /isn't a font file/);
+  await pickFile(new w.File([new Uint8Array(3000)], "BrandSans-Variable.woff2"));
+  assert.ok(!$("#dropDone").hidden);
+  assert.ok($("#drop").classList.contains("has"));
+  assert.equal($("#dropName").textContent, "BrandSans-Variable.woff2");
+  assert.equal($("#dropSize").textContent, "3 KB");
+  assert.match($("#dropAa").style.fontFamily, /Dropped font 1/);
+  const dt = { types: ["Files"], files: [new w.File([new Uint8Array(10)], "Display-Bold.otf")], dropEffect: "" };
+  const fire = type => {
+    const e = new w.Event(type, { bubbles: true, cancelable: true });
+    e.dataTransfer = dt;
+    $(".cell-drop").dispatchEvent(e);
+    return e;
+  };
+  assert.ok(fire("dragenter").defaultPrevented);
+  assert.ok($("#drop").classList.contains("over"));
+  assert.ok(fire("drop").defaultPrevented);
+  await p.tick(30);
+  assert.ok(!$("#drop").classList.contains("over"));
+  assert.equal($("#dropName").textContent, "Display-Bold.otf");
+  assert.match($("#dropAa").style.fontFamily, /Dropped font 2/);
+  assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
+test("bento weight picker only selects weights the font has", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, $$, key } = p;
+  const radios = $$('#wt [role="radio"]');
+  assert.deepEqual(radios.map(b => b.dataset.w), ["300", "400", "500", "600", "700"]);
+  assert.equal($$("#wt .no").length, 2);
+  radios[4].click();
+  assert.equal($("#wtSpec").style.fontWeight, "700");
+  assert.equal(radios[4].getAttribute("aria-checked"), "true");
+  key(radios[4], "ArrowRight");
+  assert.equal(radios[0].getAttribute("aria-checked"), "true");
+  assert.equal(p.d.activeElement, radios[0]);
+  $$("#wt .no")[0].click();
+  assert.equal($("#wtNow").textContent, "No 800 in this font");
+  assert.equal(radios[0].getAttribute("aria-checked"), "true", "a missing weight is never selected");
+  assert.equal($("#wtSpec").style.fontWeight, "300");
+  assert.match(read("index.html"), /family=Space\+Grotesk:wght@300\.\.700/);
+  p.w.close();
+});
+
+test("bento share link follows the options and opens the same setup in the app", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, w } = p;
+  let copied = "";
+  w.navigator.clipboard.writeText = async t => { copied = t; };
+  const opt = k => $(`.share-opts [data-k="${k}"]`);
+  assert.equal($("#shareUrl").getAttribute("href"), "app.html#h=Syne&b=Inter&w=700&accent=ff5a36&theme=dark");
+  opt("h").click();
+  await p.tick(250);
+  opt("theme").click();
+  opt("accent").click();
+  const href = $("#shareUrl").getAttribute("href");
+  assert.equal(href, "app.html#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
+  assert.equal($("#share").dataset.theme, "light");
+  assert.match($("#shareH").style.fontFamily, /Fraunces/);
+  assert.equal(opt("h").textContent, "Fraunces");
+  assert.equal($("#shareText").textContent, "fontroom.vercel.app/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
+  assert.ok($("#shareText .hot"));
+  $("#shareCopy").click();
+  await p.tick(10);
+  assert.equal(copied, "https://fontroom.vercel.app/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
+  assert.equal($("#shareCopy").getAttribute("aria-label"), "Link copied");
+
+  const app = openPage("app.html", { hash: "#" + href.split("#")[1] });
+  await app.tick(150);
+  assert.match(app.w.location.hash, /h=Fraunces/);
+  assert.match(app.w.location.hash, /w=700/);
+  assert.match(app.w.location.hash, /accent=3b5bdb/);
+  assert.match(app.w.location.hash, /theme=light/);
+  assert.deepEqual(app.errors, []);
+  app.w.close();
+  p.w.close();
+});
+
+test("bento flip stack moves with its buttons and the [ and ] keys", async () => {
+  const p = openPage("index.html", { visible: true });
+  await p.tick(50);
+  const { $, $$, key } = p;
+  const pos = () => $$(".flip-card").map(c => c.dataset.pos).join("");
+  assert.equal(pos(), "0123");
+  $("#flipNext").click();
+  assert.equal($("#flipCount").textContent, "2 of 4");
+  assert.equal(pos(), "3012");
+  assert.equal($("#flipCount").getAttribute("aria-live"), "polite");
+  key(p.d.body, "[");
+  assert.equal($("#flipCount").textContent, "1 of 4");
+  key(p.d.body, "[");
+  assert.equal($("#flipCount").textContent, "4 of 4");
+  key(p.d.body, "]", { metaKey: true });
+  assert.equal($("#flipCount").textContent, "4 of 4", "shortcuts with modifiers are left alone");
+  await p.tick(3000);
+  assert.equal($("#flipCount").textContent, "4 of 4", "autoplay stops once you take over");
+  assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
+test("landing page scrolls smoothly with a mouse or trackpad and natively otherwise", async () => {
+  const mouse = openPage("index.html", { media: q => q.includes("pointer: fine") });
+  await mouse.tick(50);
+  assert.equal(typeof mouse.w.Lenis, "function");
+  assert.ok(mouse.w.lenis, "Lenis runs for a fine pointer");
+  assert.ok(mouse.d.documentElement.classList.contains("lenis"));
+  assert.deepEqual(mouse.errors, []);
+  mouse.w.close();
+  const touch = openPage("index.html", { media: () => false });
+  await touch.tick(50);
+  assert.equal(touch.w.lenis, undefined, "touch keeps native scrolling");
+  touch.w.close();
+  const still = openPage("index.html", { media: q => q.includes("pointer: fine") || q.includes("reduce") });
+  await still.tick(50);
+  assert.equal(still.w.lenis, undefined, "reduced motion keeps native scrolling");
+  still.w.close();
+  assert.match(read("css/home.css"), /html\.lenis\{scroll-behavior:auto\}/);
+});
+
 test("landing page story: problem, steps, questions and one call to action", async () => {
   const p = openPage("index.html");
   await p.tick(50);
