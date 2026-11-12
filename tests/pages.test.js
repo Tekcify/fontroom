@@ -107,6 +107,31 @@ test("landing page keeps phones from scrolling sideways", () => {
   assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1">/);
 });
 
+test("landing preview switches between four site templates and keeps the font", async () => {
+  const p = openPage("index.html");
+  await p.tick(50);
+  const { $, $$, key } = p;
+  const tabs = $$("#tplTabs [role=tab]");
+  assert.deepEqual(tabs.map(t => t.textContent), ["Fintech", "Café", "Docs", "Magazine"]);
+  assert.equal($("#stage").dataset.tpl, "fin");
+  assert.match($("#siteBody").textContent, /Spend management/);
+  $$(".font-opt")[1].click();
+  tabs[1].click();
+  assert.equal($("#stage").dataset.tpl, "cafe");
+  assert.equal($("#tplDomain").textContent, "juniper.cafe");
+  assert.match($("#siteBody").textContent, /Bread baked/);
+  assert.match($("#phoneBody").textContent, /Your order/);
+  assert.match($("#stage").style.getPropertyValue("--fh"), /Syne/);
+  key(tabs[1], "End");
+  assert.equal($("#stage").dataset.tpl, "mag");
+  assert.equal($("#stage").getAttribute("aria-labelledby"), "tpl-mag");
+  assert.ok($$("#siteBody .h").length >= 3, "headings in every template use the picked font");
+  key(tabs[3], "ArrowRight");
+  assert.equal($("#stage").dataset.tpl, "fin");
+  assert.deepEqual(p.errors, []);
+  p.w.close();
+});
+
 test("landing page story: problem, steps, questions and one call to action", async () => {
   const p = openPage("index.html");
   await p.tick(50);

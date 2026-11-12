@@ -39,10 +39,11 @@ input{font:inherit;color:inherit}
 .slot-name{grid-column:1/-1;font-size:21px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--t1)}
 .slot-meta{grid-column:1/-1;font-size:12px;color:var(--t4)}
 .slot-actions{display:flex;gap:6px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;background:var(--s1);color:var(--t2);font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,color .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 12px;border-radius:9px;background:var(--s1);color:var(--t2);font-size:13px;font-weight:500;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);transition:background .15s,color .15s,box-shadow .15s}
 .btn:hover{background:var(--s2);color:var(--t1)}
-.btn.primary{background:var(--t1);color:var(--bg);font-weight:600}
-.btn.primary:hover{background:#fff}
+.btn:active{transform:scale(.985)}
+.btn.primary{background:linear-gradient(180deg,#fff,#e4e8ee);color:#0a0c0f;font-weight:600;box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(10,12,15,.14),0 0 0 1px rgba(255,255,255,.18),0 6px 18px -8px rgba(255,255,255,.4)}
+.btn.primary:hover{background:linear-gradient(180deg,#fff,#eef1f5)}
 .slot-actions .btn{flex:1}
 .save-btn[aria-pressed=true]{background:var(--t1);color:var(--bg)}
 .save-btn[aria-pressed=true] .ic{fill:currentColor}

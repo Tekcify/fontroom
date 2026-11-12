@@ -83,10 +83,10 @@ public/
   js/core.js        Font catalogue, weight helpers, font file parsing, code output
   js/templates.js   Website and app templates
   js/app.js         UI and state
-  js/home.js        Landing page: font picker, live code, screenshot tabs
-  js/threads.js     Animated background, ported from React Bits
+  js/home.js        Landing page: font picker, site templates, live code, screenshot tabs
+  js/lightrays.js   Light Rays background, ported from React Bits
   img/              Landing page screenshots
-  fonts/            Aspekta and Bricolage Grotesque
+  fonts/            Onest, the interface font
 lib/preview.js      Website preview: fetches a page and adds the font script
 api/preview.js      Vercel function for the website preview
 scripts/dev.js      Local server for the site and the preview endpoint
@@ -115,10 +115,10 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for
 ## Credits
 
 - Fonts in the preview are served by [Google Fonts](https://fonts.google.com).
-- The interface is set in [Aspekta](https://github.com/ivodolenc/aspekta) by Ivo Dolenc, under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL.txt`.
-- Landing page headings are set in [Bricolage Grotesque](https://github.com/ateliertriay/bricolage) by Mathieu Triay, under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL-Bricolage.txt`.
-- The landing page background is a plain JavaScript port of [Threads](https://reactbits.dev) from React Bits by David Haz. It keeps its own license (MIT with the Commons Clause), in `public/js/threads.LICENSE.md`, and is not covered by Fontroom's MIT license.
+- The interface is set in [Onest](https://github.com/googlefonts/onest), under the SIL Open Font License 1.1. Its license is in `public/fonts/OFL-Onest.txt`.
+- Icons come from [Hugeicons](https://hugeicons.com) (the free stroke set, MIT, license in `licenses/hugeicons-LICENSE.md`), inlined as SVG symbols. The three step icons on the landing page are drawn for Fontroom.
+- The landing page background is a plain JavaScript port of [Light Rays](https://reactbits.dev) from React Bits by David Haz. It keeps its own license (MIT with the Commons Clause), in `public/js/lightrays.LICENSE.md`, and is not covered by Fontroom's MIT license.
 
 ## License
 
-[MIT](LICENSE), except `public/js/threads.js` and the bundled fonts, which keep their own licenses listed above.
+[MIT](LICENSE), except `public/js/lightrays.js` and the bundled font, which keep their own licenses listed above.

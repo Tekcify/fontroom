@@ -39,7 +39,10 @@
         io.unobserve(en.target);
       });
     }, { rootMargin: "0px 0px -8% 0px" });
-    reveals.forEach(el => io.observe(el));
+    const vh = window.innerHeight || 800;
+    const first = reveals.filter(el => el.getBoundingClientRect().top < vh);
+    reveals.filter(el => !first.includes(el)).forEach(el => io.observe(el));
+    requestAnimationFrame(() => requestAnimationFrame(() => first.forEach(el => el.classList.add("in"))));
   }
 
   const say = $("say");
