@@ -6,7 +6,7 @@ See your font on a real website and mobile app before you write any code.
 
 Google Fonts shows you one sample sentence. Fontroom puts the font on a full landing page and a phone app, at real sizes, so you can judge headings, body text, buttons and numbers together. When you like the pairing, it gives you the setup code for your stack.
 
-**Live:** [fontroom.vercel.app](https://fontroom.vercel.app)
+**Live:** [fontroom.tekcify.com](https://fontroom.tekcify.com)
 
 ![Fontroom trying Fraunces and Inter on stripe.com, desktop and mobile](docs/app.jpg)
 
@@ -97,7 +97,7 @@ docs/               README images
 
 ## Before and after
 
-Fontroom started as a demo for a talk on cleaning up AI-generated websites. `public/slop.html` and `public/slop-app.html` keep the deliberately bad "before" version: gradient text, emoji labels, invented stats and testimonials, and copy that says nothing. The real product, its [landing page](https://fontroom.vercel.app) and the [design primitives](https://fontroom.vercel.app/primitives) are the "after". Turn on "Compare with slop" on the primitives page to see each component next to its sloppy version.
+Fontroom started as a demo for a talk on cleaning up AI-generated websites. `public/slop.html` and `public/slop-app.html` keep the deliberately bad "before" version: gradient text, emoji labels, invented stats and testimonials, and copy that says nothing. The real product, its [landing page](https://fontroom.tekcify.com) and the [design primitives](https://fontroom.tekcify.com/primitives) are the "after". Turn on "Compare with slop" on the primitives page to see each component next to its sloppy version.
 
 ## Deploy
 
