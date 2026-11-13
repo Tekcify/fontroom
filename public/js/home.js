@@ -234,7 +234,7 @@
       qs = new URLSearchParams(p).toString();
       link.href = `app.html#${qs}`;
       const hotKeys = hot === "h" ? ["h", "w"] : [hot];
-      text.innerHTML = "fontroom.vercel.app/app#" + qs.split("&").map(kv => {
+      text.innerHTML = "fontroom.tekcify.com/app#" + qs.split("&").map(kv => {
         const [k, v] = kv.split("=");
         return `${k}=<b${hotKeys.includes(k) ? ' class="hot"' : ""}>${esc(v)}</b>`;
       }).join("&amp;");
@@ -256,7 +256,7 @@
     }));
     copy.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(`https://fontroom.vercel.app/app#${qs}`);
+        await navigator.clipboard.writeText(`https://fontroom.tekcify.com/app#${qs}`);
         copy.querySelector("use").setAttribute("href", "#i-check");
         copy.setAttribute("aria-label", "Link copied");
         clearTimeout(copyT);

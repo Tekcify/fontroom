@@ -5,7 +5,7 @@ const path = require("node:path");
 const { JSDOM } = require("jsdom");
 const { read, PUBLIC } = require("./helpers");
 
-const SITE = "https://fontroom.vercel.app";
+const SITE = "https://fontroom.tekcify.com";
 const doc = page => new JSDOM(read(page)).window.document;
 const meta = (d, sel) => d.querySelector(sel)?.getAttribute("content");
 const ldBlocks = d => [...d.querySelectorAll('script[type="application/ld+json"]')].map(s => JSON.parse(s.textContent));

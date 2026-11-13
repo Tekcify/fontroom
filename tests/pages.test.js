@@ -273,11 +273,11 @@ test("bento share link follows the options and opens the same setup in the app",
   assert.equal($("#share").dataset.theme, "light");
   assert.match($("#shareH").style.fontFamily, /Fraunces/);
   assert.equal(opt("h").textContent, "Fraunces");
-  assert.equal($("#shareText").textContent, "fontroom.vercel.app/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
+  assert.equal($("#shareText").textContent, "fontroom.tekcify.com/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
   assert.ok($("#shareText .hot"));
   $("#shareCopy").click();
   await p.tick(10);
-  assert.equal(copied, "https://fontroom.vercel.app/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
+  assert.equal(copied, "https://fontroom.tekcify.com/app#h=Fraunces&b=Inter&w=700&accent=3b5bdb&theme=light");
   assert.equal($("#shareCopy").getAttribute("aria-label"), "Link copied");
 
   const app = openPage("app.html", { hash: "#" + href.split("#")[1] });

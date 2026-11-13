@@ -46,4 +46,4 @@ User-agent: Bingbot
 Allow: /
 Disallow: /api/
 
-Sitemap: https://fontroom.vercel.app/sitemap.xml
+Sitemap: https://fontroom.tekcify.com/sitemap.xml

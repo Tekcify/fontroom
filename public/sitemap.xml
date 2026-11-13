@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://fontroom.vercel.app/</loc>
+    <loc>https://fontroom.tekcify.com/</loc>
     <lastmod>2026-11-12</lastmod>
-    <image:image><image:loc>https://fontroom.vercel.app/img/shot-saas.webp</image:loc></image:image>
-    <image:image><image:loc>https://fontroom.vercel.app/img/shot-docs.webp</image:loc></image:image>
-    <image:image><image:loc>https://fontroom.vercel.app/img/shot-magazine.webp</image:loc></image:image>
-    <image:image><image:loc>https://fontroom.vercel.app/og.png</image:loc></image:image>
+    <image:image><image:loc>https://fontroom.tekcify.com/img/shot-saas.webp</image:loc></image:image>
+    <image:image><image:loc>https://fontroom.tekcify.com/img/shot-docs.webp</image:loc></image:image>
+    <image:image><image:loc>https://fontroom.tekcify.com/img/shot-magazine.webp</image:loc></image:image>
+    <image:image><image:loc>https://fontroom.tekcify.com/og.png</image:loc></image:image>
   </url>
   <url>
-    <loc>https://fontroom.vercel.app/app</loc>
+    <loc>https://fontroom.tekcify.com/app</loc>
     <lastmod>2026-11-12</lastmod>
   </url>
   <url>
-    <loc>https://fontroom.vercel.app/primitives</loc>
+    <loc>https://fontroom.tekcify.com/primitives</loc>
     <lastmod>2026-11-12</lastmod>
   </url>
 </urlset>
